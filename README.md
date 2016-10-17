@@ -127,4 +127,3 @@ niftyCloud.V3.delete("/first-bucket/script.png", {
 - ParseResponseError: Error for Response parsing
 - InvalidParameterError: Error for Invalid parameters
 - ApiError: Error for API Response returns 4xx or 5xx
-
