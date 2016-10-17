@@ -1,0 +1,43 @@
+{
+  "name": "niftycloud-auth",
+  "version": "0.0.1",
+  "description": "This is the SDK for NIFTY Cloud API to make authentication parameters of API request.",
+  "main": "lib/niftycloud.js",
+  "repository": {
+      "type": "git",
+      "url": "git+https://github.com/ykokw/niftycloud-auth.git"
+  },
+  "bugs": {
+      "url": "https://github.com/ykokw/niftycloud-auth/issues"
+  },
+  "keywords": [
+      "nifty",
+      "niftycloud",
+      "niftycloud-auth"
+  ],
+  "homepage": "https://github.com/ykokw/niftycloud-auth",
+  "dependencies": {
+    "superagent": "^2.3.0",
+    "qs": "^6.2.1",
+    "sort-object": "^3.0.2",
+    "xml2js": "^0.4.17",
+    "create-error": "^0.3.1",
+    "checkit": "^0.7.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.0.1",
+    "chai": "^3.5.0",
+    "istanbul": "^0.4.4",
+    "coveralls": "^2.11.12",
+    "superagent-mocker": "^0.5.2"
+  },
+  "scripts": {
+      "test": "istanbul cover _mocha -R test/*"
+  },
+  "engines": {
+      "node": ">=6.3.1"
+  },
+  "author": "ykokw (https://github.com/ykokw)",
+  "contributors": [],
+  "license": "Apache-2.0"
+}

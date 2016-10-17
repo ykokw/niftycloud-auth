@@ -1,0 +1,4 @@
+<RebootInstancesResponse xmlns="https://cp.cloud.nifty.com/api/">
+  <requestId>ad2adb5f-3b7a-4574-9b7d-8dd49f6dad4e</requestId>
+  <return>true</return>
+</RebootInstancesResponse>

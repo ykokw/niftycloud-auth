@@ -1,0 +1,8 @@
+<SendEmailResponse>
+ <SendEmailResult>
+  <MessageId>000001fc4e1329-7ed7-4880-a35b-0ee09cc35776-000000</MessageId>
+ </SendEmailResult>
+ <ResponseMetadata>
+  <RequestId>cd719149-4a57-4fdd-af69-b7bc3b653b0d</RequestId>
+ </ResponseMetadata>
+</SendEmailResponse>
