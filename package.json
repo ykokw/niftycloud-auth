@@ -28,8 +28,7 @@
     "mocha": "^3.0.1",
     "chai": "^3.5.0",
     "istanbul": "^0.4.4",
-    "coveralls": "^2.11.12",
-    "superagent-mocker": "^0.5.2"
+    "nock": "^8.1.0"
   },
   "scripts": {
       "test": "istanbul cover _mocha -R test/*"
