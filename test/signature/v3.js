@@ -1,4 +1,3 @@
-
 "use strict";
 
 const assert      = require("chai").assert;
@@ -29,33 +28,37 @@ describe("Signature ", ()=>{
       before(()=>{
       });
       it("should return correct signature", ()=>{
-        v3.canonicalHeader = {
+        const headers = {
           "Content-Type": "application/octet-stream",
           "Date": "Wed, 29 Jun 2016 12:00:00 GMT"
         };
         const params = {
           method: "GET",
-          url: url.parse("https://jp-east-2.os.cloud.nifty.com/")
+          url: url.parse("https://jp-east-2.os.cloud.nifty.com/"),
+          headers: headers,
+          queries: {}
         };
 
         v3.createSignature(params);
         const expectSignature = "AWS 12345678901234567890:tXIcRltLq+ueG9HWHZDfvT7ry+g=";
-        assert.equal(v3.canonicalHeader["Authorization"], expectSignature, "signature is not correct");
+        assert.equal(headers["Authorization"], expectSignature, "signature is not correct");
       });
     });
     describe("stringToSign method", ()=>{
       it("should return correct stringToSign when request get service of object storage api", ()=>{
-        v3.canonicalHeader = {
+        const headers = {
           "Content-Type": "application/octet-stream",
           "Date": "Wed, 29 Jun 2016 12:00:00 GMT"
         };
         const params = {
           method: "GET",
-          url: url.parse("https://jp-east-2.os.cloud.nifty.com/")
+          url: url.parse("https://jp-east-2.os.cloud.nifty.com/"),
+          headers: headers,
+          queries: {}
         };
 
         const stringToSign = v3.stringToSign(params);
-      const expectStr = `${params.method}\n\n${v3.canonicalHeader["Content-Type"]}\n${v3.canonicalHeader["Date"]}\n/`;
+      const expectStr = `${params.method}\n\n${headers["Content-Type"]}\n${headers["Date"]}\n/`;
         assert.equal(stringToSign, expectStr, "strToSign is not correct");
       });
     });

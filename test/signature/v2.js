@@ -28,12 +28,13 @@ describe("Signature ", ()=>{
       it("should return correct signature", ()=>{
         const params = {
           method: "GET",
-          url: url.parse("https://east-1.cp.cloud.nifty.com/api/?Action=DescribeSecurityGroups")
+          url: url.parse("https://east-1.cp.cloud.nifty.com/api/?"),
+          queries: {"Action":"DescribeSecurityGroups"}
         };
 
         v2.createSignature(params);
         const expectSignature = "3j8yjA3IoqFcYLhHiG7cuXaLPZ9UCY/BOnS2p7haV3Q=";
-        assert.equal(v2.canonicalQuery["Signature"], expectSignature, "signature is not correct");
+        assert.equal(params.queries["Signature"], expectSignature, "signature is not correct");
       });
     });
     describe("get method ", ()=>{
