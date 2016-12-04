@@ -53,5 +53,15 @@ describe("Signature ", ()=>{
         assert.equal(expect, scope, "Secret is invalid");
       });
     });
+    describe("createEncodedRequestPayload method", ()=>{
+      it("should create valid hash of payload", ()=>{
+        const headerParams = {
+          "content-type": "application/json",
+        };
+        const expect = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+        const payload = v4.createEncodedRequestPayload(null, headerParams);
+        assert.equal(expect, payload, "Payload is invalid");
+      });
+    });
   });
 });
