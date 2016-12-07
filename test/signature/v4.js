@@ -3,6 +3,7 @@
 const assert      = require("chai").assert;
 const url         = require("url");
 const fs          = require("fs");
+const qs          = require("qs");
 const parseString = require('xml2js').parseString;
 const nock        = require("nock");
 
@@ -66,7 +67,9 @@ describe("Signature ", ()=>{
     describe("stringToSign method", ()=>{
       it("should create valid string to sign", ()=>{
         const params = {
-          requestDate: "20160427T025932Z",
+          headers: {
+            "X-Nifty-Date": "20160427T025932Z"
+          },
           region: "east-1",
           serviceId: "rdb",
           canonicalRequest: "GET\n/\nAction=CreateDBSecurityGroup&DBSecurityGroupDescription=%E3%83%86%E3%82%B9%E3%83%88%E3%83%95%E3%82%A1%E3%82%A4%E3%82%A2%E3%82%A6%E3%82%A9%E3%83%BC%E3%83%AB&DBSecurityGroupName=test-fire-wall&NiftyAvailabilityZone=east-11\nhost:rdb.jp-east-1.api.cloud.nifty.com\nx-nifty-date:20160427T025932Z\n\nhost;x-nifty-date\ne3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -74,6 +77,25 @@ describe("Signature ", ()=>{
         const expect = "NIFTY4-HMAC-SHA256\n20160427T025932Z\n20160427/east-1/rdb/nifty4_request\n0342e5ade7ccb557f1d64c5e8a64f5beab49016c5675aca13cb285d8979cf8a0";
         const stringToSign = v4.stringToSign(params);
         assert.equal(expect, stringToSign, "stringToSign is invalid");
+      });
+    });
+    describe("createSignature method", ()=>{
+      it("should create valid string to sign", ()=>{
+        const params = {
+          method: "GET",
+          path: "/",
+          headers: {
+            "Host": "rdb.jp-east-1.api.cloud.nifty.com",
+            "X-Nifty-Date": "20160427T025932Z"
+          },
+          queries: qs.parse("Action=CreateDBSecurityGroup&NiftyAvailabilityZone=east-11&DBSecurityGroupDescription=テストファイアウォール&DBSecurityGroupName=test-fire-wall"),
+          bodies: null,
+          region: "east-1",
+          serviceId: "rdb"
+        };
+        const expect = "618af9a3b4e44ac2b80394a4bcffd29aa3329fb63723706e81aa55e0b1d5df37";
+        const signature = v4.createSignature(params);
+        assert.equal(expect, signature, "signature is invalid");
       });
     });
   });
