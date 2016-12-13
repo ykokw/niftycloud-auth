@@ -98,5 +98,26 @@ describe("Signature ", ()=>{
         assert.equal(expect, signature, "signature is invalid");
       });
     });
+    describe("createAuthorizationHeader method", ()=>{
+      it("should return authorization header", ()=>{
+        const params = {
+          method: "GET",
+          path: "/",
+          headers: {
+            "Host": "rdb.jp-east-1.api.cloud.nifty.com",
+            "X-Nifty-Date": "20160427T025932Z"
+          },
+          queries: qs.parse("Action=CreateDBSecurityGroup&NiftyAvailabilityZone=east-11&DBSecurityGroupDescription=テストファイアウォール&DBSecurityGroupName=test-fire-wall"),
+          bodies: null,
+          region: "east-1",
+          serviceId: "rdb"
+        };
+        const expect = "NIFTY4-HMAC-SHA256 Credential=12345678901234567890/20160427/east-1/rdb/nifty4_request, SignedHeaders=host;x-nifty-date, Signature=618af9a3b4e44ac2b80394a4bcffd29aa3329fb63723706e81aa55e0b1d5df37";
+
+        const signature = v4.createSignature(params);
+        const authorization = v4.createAuthorizationHeader(params, signature);
+        assert.equal(expect, authorization, "authorization is invalid");
+      });
+    });
   });
 });
