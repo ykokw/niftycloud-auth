@@ -50,8 +50,8 @@ describe("Signature ", ()=>{
           serviceId: "rdb"
         };
         const expect = "fd9626ac4e58ab692ce8654bebb4a0628fa974d596e9e800cf6c016e80ed41d8";
-        const scope = v4.createSecret(params);
-        assert.equal(expect, scope, "Secret is invalid");
+        const secret = v4.createSecret(params).toString("hex");
+        assert.equal(expect, secret, "Secret is invalid");
       });
     });
     describe("createEncodedRequestPayload method", ()=>{
@@ -93,7 +93,7 @@ describe("Signature ", ()=>{
           region: "east-1",
           serviceId: "rdb"
         };
-        const expect = "618af9a3b4e44ac2b80394a4bcffd29aa3329fb63723706e81aa55e0b1d5df37";
+        const expect = "d2e766e939478e65f6521fcda574e30b7cfa0d9332ccd2473c25fdd8a895073b";
         const signature = v4.createSignature(params);
         assert.equal(expect, signature, "signature is invalid");
       });
@@ -112,7 +112,7 @@ describe("Signature ", ()=>{
           region: "east-1",
           serviceId: "rdb"
         };
-        const expect = "NIFTY4-HMAC-SHA256 Credential=12345678901234567890/20160427/east-1/rdb/nifty4_request, SignedHeaders=host;x-nifty-date, Signature=618af9a3b4e44ac2b80394a4bcffd29aa3329fb63723706e81aa55e0b1d5df37";
+        const expect = "NIFTY4-HMAC-SHA256 Credential=12345678901234567890/20160427/east-1/rdb/nifty4_request, SignedHeaders=host;x-nifty-date, Signature=d2e766e939478e65f6521fcda574e30b7cfa0d9332ccd2473c25fdd8a895073b";
 
         const signature = v4.createSignature(params);
         const authorization = v4.createAuthorizationHeader(params, signature);
