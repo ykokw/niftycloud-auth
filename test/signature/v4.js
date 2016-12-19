@@ -163,6 +163,48 @@ describe("Signature ", ()=>{
         }).catch((err)=>{
         });
       });
+      it("should return error response as Object in Callback", (next)=>{
+        nock(endpoint).filteringPath((path)=>{return "/api/";})
+                      .get("/api/")
+                      .query({"Action":"InvalidAction"})
+                      .replyWithFile(400,
+                        "./test/mock/invalidResponse.xml",
+                        {
+                          "Content-Type":"application/xml"
+                        });
+        v4.get("/", {}, {
+          Action: "DescribeDBInstances",
+        }, "rdb", "east-1", (err, res)=>{
+          const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
+          parseString(expectResponseXml, (parseErr, result)=>{
+            assert(res === null);
+            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
+            next();
+          });
+        });
+      });
+      it("should return error response as Object in Promise", (next)=>{
+        nock(endpoint).filteringPath((path)=>{return "/api/";})
+                      .get("/api/")
+                      .query({"Action":"InvalidAction"})
+                      .replyWithFile(400,
+                        "./test/mock/invalidResponse.xml",
+                        {
+                          "Content-Type":"application/xml"
+                        });
+        v4.get("/", {}, {
+          Action: "DescribeDBInstances",
+        }, "rdb", "east-1").then((res)=>{
+        }).catch((err)=>{
+          const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
+          parseString(expectResponseXml, (parseErr, result)=>{
+            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
+            next();
+          });
+        });
+      });
     });
   });
 });
