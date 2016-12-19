@@ -119,5 +119,50 @@ describe("Signature ", ()=>{
         assert.equal(expect, authorization, "authorization is invalid");
       });
     });
+    describe("get method", ()=>{
+      beforeEach(()=>{
+        nock.cleanAll();
+      });
+      it("should return correct response as Object in Callback", (next)=>{
+        nock(endpoint).filteringPath((path)=>{return "/api/";})
+                      .get("/api/")
+                      .replyWithFile(200,
+                        "./test/mock/validResponse.xml",
+                        {
+                          "Content-Type":"application/xml"
+                        });
+        v4.get("/", {}, {
+          Action: "DescribeDBInstances",
+        }, "rdb", "east-1", (err, res)=>{
+          const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
+          parseString(expectResponseXml, (parseErr, result)=>{
+            assert(result !== null);
+            assert.deepEqual(res, result, "response didn't match");
+            assert(err === null);
+            next();
+          });
+        });
+      });
+      it("should return correct response as Object in Promise", (next)=>{
+        nock(endpoint).filteringPath((path)=>{return "/api/";})
+                      .get("/api/")
+                      .replyWithFile(200,
+                        "./test/mock/validResponse.xml",
+                        {
+                          "Content-Type":"application/xml"
+                        });
+        v4.get("/", {}, {
+          Action: "DescribeDBInstances",
+        }, "rdb", "east-1").then((res)=>{
+          const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
+          parseString(expectResponseXml, (err, result)=>{
+            assert(result !== null);
+            assert.deepEqual(res, result, "response didn't match");
+            next();
+          });
+        }).catch((err)=>{
+        });
+      });
+    });
   });
 });
