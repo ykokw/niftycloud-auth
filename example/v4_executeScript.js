@@ -5,7 +5,10 @@ const NiftyCloud = require("../lib/niftycloud.js");
 const niftyCloud = new NiftyCloud(
   "YOUR_ACCESS_KEY",  //Change to own access key
   "YOUR_SECRET_ACCESS_KEY", //Change to own secret access key
-  "https://script.api.cloud.nifty.com"
+  "https://script.api.cloud.nifty.com",
+  //If your environment is required proxy server, Add setting of proxy server in here.
+  //This parameter is optional
+  "http://example.com:8080"
 );
 
 niftyCloud.V4AWS.post("/2015-09-01", {
