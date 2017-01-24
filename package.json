@@ -18,6 +18,7 @@
   "homepage": "https://github.com/ykokw/niftycloud-auth",
   "dependencies": {
     "superagent": "^2.3.0",
+    "superagent-proxy":"^1.0.2",
     "qs": "^6.2.1",
     "sort-object": "^3.0.2",
     "xml2js": "^0.4.17",
