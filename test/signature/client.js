@@ -10,20 +10,37 @@ const nock        = require("nock");
 const Client = require("../../lib/signature/client");
 
 const endpoint = "https://east-1.cp.cloud.nifty.com";
-const client = new Client(
-  "12345678901234567890",
-  "1234567890abcdefghijklmnopqrstuvwxyzABCD",
-  endpoint
-);
 
 describe("Client class", ()=>{
-  describe("constructor", ()=>{
-    it("should set empty string as default parameter", ()=>{
+  describe.only("constructor", ()=>{
+    it("should set empty string as default parameter when parameter is not defined", ()=>{
       const cli = new Client();
-      assert(cli.accessKey === "", "access key is not empty string" + cli.accessKey + typeof(cli.accessKey));
-      assert(cli.secretKey === "");
-      assert(cli.endpoint === "");
-      assert(cli.proxy === "");
+      assert.equal(cli.accessKey ,"");
+      assert.equal(cli.secretKey , "");
+      assert.equal(cli.endpoint , "");
+      assert.equal(cli.proxy , "");
+    });
+    it("should set specified parameters", ()=>{
+      const cli = new Client(
+        "12345678901234567890",
+        "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+        endpoint,
+        ""
+      );
+      assert.equal(cli.accessKey , "12345678901234567890");
+      assert.equal(cli.secretKey , "1234567890abcdefghijklmnopqrstuvwxyzABCD");
+      assert.equal(cli.endpoint , endpoint);
+      assert.equal(cli.proxy , "");
+    });
+    it("should set default parameter when parameter is not specified", ()=>{
+      const cli = new Client(
+        "12345678901234567890",
+        "1234567890abcdefghijklmnopqrstuvwxyzABCD"
+      );
+      assert.equal(cli.accessKey , "12345678901234567890");
+      assert.equal(cli.secretKey , "1234567890abcdefghijklmnopqrstuvwxyzABCD");
+      assert.equal(cli.endpoint , "");
+      assert.equal(cli.proxy , "");
     });
   });
   //describe("sendRequest method", ()=>{
