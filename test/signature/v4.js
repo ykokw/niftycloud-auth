@@ -11,20 +11,14 @@ const NiftyCloud  = require("../../lib/niftycloud");
 
 const endpoint = "https://east-1.cp.cloud.nifty.com";
 
+const v4 = new NiftyCloud.V4(
+  "12345678901234567890",
+  "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+  endpoint
+);
+
 describe("Signature ", ()=>{
-  let niftycloud = null;
-  before(()=>{
-    niftycloud = new NiftyCloud(
-      "12345678901234567890",
-      "1234567890abcdefghijklmnopqrstuvwxyzABCD",
-      endpoint
-    );
-  });
   describe("v4 library ", ()=>{
-    let v4 = null;
-    before(()=>{
-      v4 = niftycloud.V4;
-    });
 
     //sample parameters for creating signature is here
     //http://cloud.nifty.com/api/signature_v4.htm
@@ -178,7 +172,7 @@ describe("Signature ", ()=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
             assert(res === null);
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -199,7 +193,7 @@ describe("Signature ", ()=>{
         }).catch((err)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });

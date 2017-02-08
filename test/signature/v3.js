@@ -10,23 +10,15 @@ const NiftyCloud  = require("../../lib/niftycloud");
 
 const endpoint = "https://jp-east-2.os.cloud.nifty.com";
 
+const v3 = new NiftyCloud.V3(
+  "12345678901234567890",
+  "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+  endpoint
+);
+
 describe("Signature ", ()=>{
-  let niftycloud = null;
-  before(()=>{
-    niftycloud = new NiftyCloud(
-      "12345678901234567890",
-      "1234567890abcdefghijklmnopqrstuvwxyzABCD",
-      endpoint
-    );
-  });
   describe("v3 library ", ()=>{
-    let v3 = null;
-    before(()=>{
-      v3 = niftycloud.V3;
-    });
     describe("createSignature method ", ()=>{
-      before(()=>{
-      });
       it("should return correct signature", ()=>{
         const headers = {
           "Content-Type": "application/octet-stream",
@@ -112,7 +104,7 @@ describe("Signature ", ()=>{
         },null , (err, res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -130,7 +122,7 @@ describe("Signature ", ()=>{
         }, null).catch((err)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -140,21 +132,21 @@ describe("Signature ", ()=>{
         v3.get(null, {
           "Content-Type": "application/xml"
         }, null).catch((err)=>{
-          assert.ok(err instanceof niftycloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
+          assert.ok(err instanceof NiftyCloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
           next();
         });
       });
       it("should return InvalidParameterErro response when Content-Type is not specified", (next)=>{
         v3.get("/invalid/", {
         }, null).catch((err)=>{
-          assert.ok(err instanceof niftycloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
+          assert.ok(err instanceof NiftyCloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
           next();
         });
       });
       it("should return InvalidParameterErro response when headers is null", (next)=>{
         v3.get("/invalid/", {
         }, null).catch((err)=>{
-          assert.ok(err instanceof niftycloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
+          assert.ok(err instanceof NiftyCloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
           next();
         });
       });
@@ -195,7 +187,7 @@ describe("Signature ", ()=>{
         }, null, null, (err, res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -214,7 +206,7 @@ describe("Signature ", ()=>{
         }, null, null).catch((err)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -275,7 +267,7 @@ describe("Signature ", ()=>{
         }, null, null, (err, res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -294,7 +286,7 @@ describe("Signature ", ()=>{
         }, null, null).catch((err)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -337,7 +329,7 @@ describe("Signature ", ()=>{
         }, null, (err, res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -356,7 +348,7 @@ describe("Signature ", ()=>{
         }, null).catch((err)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
