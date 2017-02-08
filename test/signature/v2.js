@@ -10,21 +10,15 @@ const NiftyCloud  = require("../../lib/niftycloud");
 
 const endpoint = "https://east-1.cp.cloud.nifty.com";
 
+const v2 = new NiftyCloud.V2(
+  "12345678901234567890",
+  "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+  endpoint
+);
+
 describe("Signature ", ()=>{
-  let niftycloud = null;
   describe("v2 library ", ()=>{
-    before(()=>{
-      niftycloud = new NiftyCloud(
-        "12345678901234567890",
-        "1234567890abcdefghijklmnopqrstuvwxyzABCD",
-        endpoint
-      );
-    });
-    let v2 = null;
     describe("createSignature method ", ()=>{
-      before(()=>{
-        v2 = niftycloud.V2;
-      });
       it("should return correct signature", ()=>{
         const params = {
           method: "GET",
@@ -99,7 +93,7 @@ describe("Signature ", ()=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
             assert(res === null);
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -120,7 +114,7 @@ describe("Signature ", ()=>{
         }).catch((err)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof niftycloud.Errors.ApiError, `actual type: ${typeof err}`);
+            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
             assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
             next();
           });
@@ -129,14 +123,14 @@ describe("Signature ", ()=>{
       it("should return Errors.InvalidParameters when option is null", (next)=>{
         v2.get(null).then((res)=>{
         }).catch((err)=>{
-          assert.ok(err instanceof niftycloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
+          assert.ok(err instanceof NiftyCloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
           next();
         });
       });
       it("should return Errors.InvalidParameters when option is not specify api Action", (next)=>{
         v2.get({"key": "value"}).then((res)=>{
         }).catch((err)=>{
-          assert.ok(err instanceof niftycloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
+          assert.ok(err instanceof NiftyCloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
           next();
         });
       });
