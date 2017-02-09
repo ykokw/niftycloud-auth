@@ -86,7 +86,6 @@ describe("Client class", ()=>{
         cb    : (err, res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
-            assert(result !== null);
             assert(err === null);
             assert(parseErr === null);
             assert.deepEqual(res, result, "response didn't match");
@@ -100,15 +99,29 @@ describe("Client class", ()=>{
       client.sendRequest("get", "/api/validXmlResponse").then((res)=>{
         const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
         parseString(expectResponseXml, (parseErr, result)=>{
-          assert(result !== null);
           assert(parseErr === null);
           assert.deepEqual(res, result, "response didn't match");
           next();
         });
       }).catch(next);
     });
-    //it("shoud return valid json response as Object in callback", (next)=>{});
-    //it("shoud return valid json response as Object in promise", (next)=>{});
+    it("shoud return valid json response as Object in callback", (next)=>{
+      const params = {
+        cb    : (err, res)=>{
+          assert(err === null);
+          assert.deepEqual(res.body, {"result":"ok"});
+          next();
+        }
+      };
+      client.sendRequest("get", "/api/validJsonResponse", params);
+
+    });
+    it("shoud return valid json response as Object in promise", (next)=>{
+      client.sendRequest("get", "/api/validJsonResponse").then((res)=>{
+        assert.deepEqual(res.body, {"result":"ok"});
+        next();
+      }).catch(next);
+    });
     //it("shoud return api error response as Object in promise", (next)=>{});
     //it("shoud return api error response as Object in promise", (next)=>{});
     //it("shoud return parse response error response as Object in promise", (next)=>{});
