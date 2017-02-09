@@ -122,7 +122,20 @@ describe("Client class", ()=>{
         next();
       }).catch(next);
     });
-    //it("shoud return api error response as Object in promise", (next)=>{});
+    it("shoud return api error response as Object in promise", (next)=>{
+      const params = {
+        cb    : (err, res)=>{
+          const expectResponseXml = fs.readFileSync("./test/mock/errorResponse.xml");
+          parseString(expectResponseXml, (parseErr, result)=>{
+            assert(parseErr === null);
+            assert.equal(err.status, 400, "response didn't match");
+            assert.deepEqual(err.response, result, "response didn't match");
+            next();
+          });
+        }
+      };
+      client.sendRequest("get", "/api/errorXmlResponse", params);
+    });
     //it("shoud return api error response as Object in promise", (next)=>{});
     //it("shoud return parse response error response as Object in promise", (next)=>{});
     //it("shoud return parse response error response as Object in promise", (next)=>{});
