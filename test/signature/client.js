@@ -64,11 +64,16 @@ describe("Client class", ()=>{
 
       nock(endpoint).get("/api/validStringResponse")
                     .times(2)
-                    .reply(200, "ok");
+                    .reply(200, "ok", {
+                      "Content-Type":"text/plain"
+                    });
 
       nock(endpoint).get("/api/validEmptyResponse")
                     .times(2)
-                    .reply(204, null);
+                    .reply(204, null,
+                      {
+                        "Content-Type":"application/xml"
+                      });
 
       nock(endpoint).get("/api/brokenXmlResponse")
                     .times(2)
@@ -96,7 +101,7 @@ describe("Client class", ()=>{
           parseString(expectResponseXml, (parseErr, result)=>{
             assert(err === null);
             assert(parseErr === null);
-            assert.deepEqual(res, result, "response didn't match");
+            assert.deepEqual(res.body, result, "response didn't match");
             next();
           });
         }
@@ -108,7 +113,7 @@ describe("Client class", ()=>{
         const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
         parseString(expectResponseXml, (parseErr, result)=>{
           assert(parseErr === null);
-          assert.deepEqual(res, result, "response didn't match");
+          assert.deepEqual(res.body, result, "response didn't match");
           next();
         });
       }).catch(next);
@@ -127,6 +132,42 @@ describe("Client class", ()=>{
     it("shoud return valid json response as Object in promise", (next)=>{
       client.sendRequest("get", "/api/validJsonResponse").then((res)=>{
         assert.deepEqual(res.body, {"result":"ok"});
+        next();
+      }).catch(next);
+    });
+    it("shoud return valid string response as Object in callback", (next)=>{
+      const params = {
+        cb    : (err, res)=>{
+          assert(err === null);
+          assert.equal(res.text, "ok");
+          next();
+        }
+      };
+      client.sendRequest("get", "/api/validStringResponse", params);
+
+    });
+    it("shoud return valid string response as Object in promise", (next)=>{
+      client.sendRequest("get", "/api/validStringResponse").then((res)=>{
+        assert.equal(res.text, "ok");
+        next();
+      }).catch(next);
+    });
+    it("shoud return valid empty response as Object in callback", (next)=>{
+      const params = {
+        cb    : (err, res)=>{
+          assert(err === null);
+          assert.equal(res.status, 204);
+          assert.equal(res.text, "");
+          next();
+        }
+      };
+      client.sendRequest("get", "/api/validEmptyResponse", params);
+
+    });
+    it("shoud return valid string response as Object in promise", (next)=>{
+      client.sendRequest("get", "/api/validEmptyResponse").then((res)=>{
+        assert.equal(res.status, 204);
+        assert.equal(res.text, "");
         next();
       }).catch(next);
     });
