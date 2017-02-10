@@ -164,7 +164,7 @@ describe("Client class", ()=>{
       client.sendRequest("get", "/api/validEmptyResponse", params);
 
     });
-    it("shoud return valid string response as Object in promise", (next)=>{
+    it("shoud return valid empty response as Object in promise", (next)=>{
       client.sendRequest("get", "/api/validEmptyResponse").then((res)=>{
         assert.equal(res.status, 204);
         assert.equal(res.text, "");
