@@ -206,7 +206,57 @@ describe.only("Client class", ()=>{
         next();
       });
     });
-    //it("shoud return invalid parameters error response as Object in promise", (next)=>{});
-    //it("shoud return invalid parameters error response as Object in promise", (next)=>{});
+    it("shoud return invalid parameters error response as Object in callback", (next)=>{
+      const invalidClient = new Client(
+        "invalidEndPoint"
+      );
+      const params = {
+        cb    : (err, res)=>{
+          assert.equal(res, null);
+          assert(err instanceof client.InvalidParametersError);
+          assert.equal(err.name, "InvalidParametersError");
+          assert.equal(err.message, "Request parameters is invalid");
+          assert.equal(err.result[0].message, '"urlString" must be a valid uri with a scheme matching the http|https pattern');
+          next();
+        }
+      };
+      invalidClient.sendRequest("get", "/api", params)
+    });
+    it("shoud return invalid parameters error response as Object in promise", (next)=>{
+      const invalidClient = new Client(
+        "invalidEndPoint"
+      );
+      invalidClient.sendRequest("get", "/api").then((res)=>{}).catch((err)=>{
+        assert(err instanceof client.InvalidParametersError);
+        assert.equal(err.name, "InvalidParametersError");
+        assert.equal(err.message, "Request parameters is invalid");
+        assert.equal(err.result[0].message, '"urlString" must be a valid uri with a scheme matching the http|https pattern');
+        next();
+      });
+    });
+    it("shoud return invalid parameters error when method is invalid", (next)=>{
+      const invalidClient = new Client(
+        endpoint
+      );
+      invalidClient.sendRequest("head", "/api").then((res)=>{}).catch((err)=>{
+        assert(err instanceof client.InvalidParametersError);
+        assert.equal(err.name, "InvalidParametersError");
+        assert.equal(err.message, "Request parameters is invalid");
+        assert.equal(err.result[0].path, "method");
+        next();
+      });
+    });
+    it("shoud return invalid parameters error when option is invalid type", (next)=>{
+      const invalidClient = new Client(
+        endpoint
+      );
+      invalidClient.sendRequest("get", "/api", {headers:"content-type: application/json"}).then((res)=>{}).catch((err)=>{
+        assert(err instanceof client.InvalidParametersError);
+        assert.equal(err.name, "InvalidParametersError");
+        assert.equal(err.message, "Request parameters is invalid");
+        assert.equal(err.result[0].path, "options.headers");
+        next();
+      });
+    });
   });
 });
