@@ -28,6 +28,89 @@ describe.only("Client class", ()=>{
       assert.equal(cli.proxy , exampleProxyEndpoint);
     });
   });
+  describe("validateReqParameters method", ()=>{
+    it("should returns validate values", (next)=>{
+      const cli = new Client(endpoint);
+      const params = {
+        method    : "get",
+        urlString : endpoint + "/api",
+      };
+      cli.validateReqParameters(params).then((values)=> {
+        assert.equal(values.method, "get");
+        next();
+      }).catch(next);
+    });
+    it("should returns InvalidParametersError when invalid parameter is specified", (next)=>{
+      const cli = new Client(endpoint);
+      const params = {
+        method    : "head", //invalid
+        urlString : endpoint + "/api",
+      };
+      cli.validateReqParameters(params).then().catch((err)=> {
+        assert.equal(err.result[0].path, "method");
+        next();
+      }).catch(next);
+    });
+  });
+  describe("createRequest method", ()=>{
+    const defaultType = 'application/x-www-form-urlencoded;charset=UTF-8';
+    const jsonType = 'application/json';
+    const xmlType = 'application/xml';
+    before(()=>{
+      nock(endpoint, {
+        reqheaders: {
+          'content-type': defaultType
+        }
+      }).get("/api")
+        .replyWithFile(200,
+          "./test/mock/validResponse.xml",
+          {
+            "Content-Type": xmlType
+          });
+
+      nock(endpoint, {
+        reqheaders: {
+          'content-type': jsonType
+        }
+      }).get("/api").reply(200, {"result":"ok"});
+    });
+    it("should return default request object", (next)=>{
+      const client = new Client(
+        endpoint
+      );
+      const req = client.createRequest("get", endpoint + "/api", null);
+      req.then((res)=>{
+        assert.equal(res.status, 200);
+        assert.equal(res.header["content-type"], xmlType);
+        next();
+      }).catch(next);
+    });
+    it("should return request object with customize headers", (next)=>{
+      const client = new Client(
+        endpoint
+      );
+      const req = client.createRequest("get", endpoint + "/api", {
+        headers: {"content-type": jsonType}
+      });
+      req.then((res)=>{
+        assert.equal(res.status, 200);
+        assert.equal(res.header["content-type"], jsonType);
+        next();
+      }).catch(next);
+    });
+  });
+  describe("parseXml method", ()=>{
+    it("should return parse result", (next)=>{
+      const client = new Client(
+        endpoint
+      );
+      const xml = '<RebootInstancesResponse xmlns="https://cp.cloud.nifty.com/api/"> <requestId>ad2adb5f-3b7a-4574-9b7d-8dd49f6dad4e</requestId><return>true</return></RebootInstancesResponse>';
+      client.parseXml("resonse", xml).then((res)=>{
+        assert.equal(res["RebootInstancesResponse"]["requestId"][0], "ad2adb5f-3b7a-4574-9b7d-8dd49f6dad4e");
+        next();
+      }).catch(next);
+    });
+  });
   describe("sendRequest method", ()=>{
     const client = new Client(
       endpoint
@@ -41,9 +124,11 @@ describe.only("Client class", ()=>{
                         "Content-Type":"application/xml"
                       });
 
-      nock(endpoint).get("/api/validJsonResponse")
-                    .times(2)
-                    .reply(200, {"result":"ok"});
+      nock(endpoint, {
+        reqheaders: {
+          'content-type': 'application/json'
+        }
+      }).get("/api/validJsonResponse").times(2).reply(200, {"result":"ok"});
 
       nock(endpoint).get("/api/validStringResponse")
                     .times(2)
@@ -60,7 +145,7 @@ describe.only("Client class", ()=>{
 
       nock(endpoint).get("/api/brokenXmlResponse")
                     .times(2)
-                    .replyWithFile(400,
+                    .replyWithFile(200,
                       "./test/mock/brokenResponse.xml",
                       {
                         "Content-Type":"application/xml"
@@ -103,6 +188,7 @@ describe.only("Client class", ()=>{
     });
     it("shoud return valid json response as Object in callback", (next)=>{
       const params = {
+        headers: {"content-type":"application/json"},
         cb    : (err, res)=>{
           assert(err === null);
           assert.deepEqual(res.body, {"result":"ok"});
@@ -113,7 +199,9 @@ describe.only("Client class", ()=>{
 
     });
     it("shoud return valid json response as Object in promise", (next)=>{
-      client.sendRequest("get", "/api/validJsonResponse").then((res)=>{
+      client.sendRequest("get", "/api/validJsonResponse", {
+        headers: {"content-type":"application/json"}
+      }).then((res)=>{
         assert.deepEqual(res.body, {"result":"ok"});
         next();
       }).catch(next);
@@ -190,8 +278,7 @@ describe.only("Client class", ()=>{
           assert.equal(res, null);
           assert(err instanceof client.ParseResponseError);
           assert.equal(err.name, "ParseResponseError");
-          assert.equal(err.message, "Response data is broken");
-          assert.equal(err.statusCode, 400);
+          assert.equal(err.message, "response data is broken");
           next();
         }
       };
@@ -201,8 +288,7 @@ describe.only("Client class", ()=>{
       client.sendRequest("get", "/api/brokenXmlResponse").then((res)=>{}).catch((err)=>{
         assert(err instanceof client.ParseResponseError);
         assert.equal(err.name, "ParseResponseError");
-        assert.equal(err.message, "Response data is broken");
-        assert.equal(err.statusCode, 400);
+        assert.equal(err.message, "response data is broken");
         next();
       });
     });
