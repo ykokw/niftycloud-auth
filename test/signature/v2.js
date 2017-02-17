@@ -47,12 +47,12 @@ describe.only("V2 class", ()=>{
     });
   });
   describe("get method ", ()=>{
+    const v2 = new NiftyCloud.V2(
+      "12345678901234567890",
+      "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+      endpoint
+    );
     describe("with valid request parameters", ()=>{
-      const v2 = new NiftyCloud.V2(
-        "12345678901234567890",
-        "1234567890abcdefghijklmnopqrstuvwxyzABCD",
-        endpoint
-      );
       const path = "/api/";
       const action = "RebootInstances";
       const queries = {
@@ -85,15 +85,38 @@ describe.only("V2 class", ()=>{
             next();
           });
         }); 
-        
+      });
+      it("should return response in promise", (next)=>{
+        v2.get(path, action, queries).then((res)=>{
+          const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
+          parseString(expectResponseXml, (parseErr, result)=>{
+            assert(result !== null);
+            assert.deepEqual(res.body, result);
+            next();
+          });
+        }).catch(next); 
       });
     });
-    //it("should return response in promise when send valid request parameters", ()=>{
-    //});
-    //it("should set empty string as default action parameters", ()=>{});
-    //it("should set empty object as default query parameter", ()=>{});
-    //it("should set query parameter object", ()=>{});
-    //it("should return invalid parameters error if action parameter is invalid", ()=>{});
-    //it("should return invalid parameters error if query parameter is invalid", ()=>{});
+    describe("with invalid parameters", ()=>{
+      const path = "/api/";
+      it("should return invalid parameters error if action parameter is null", (next)=>{
+        v2.get(path, null, {}).then().catch((err)=>{
+          assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
+          next();
+        }); 
+      });
+      it("should return invalid parameters error if action parameter is not string", (next)=>{
+        v2.get(path, 111, {}).then().catch((err)=>{
+          assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
+          next();
+        }); 
+      });
+      it("should return invalid parameters error if query parameter is not object", (next)=>{
+        v2.get(path, "DummyAction", 111).then().catch((err)=>{
+          assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
+          next();
+        }); 
+      });
+    });
   });
 });
