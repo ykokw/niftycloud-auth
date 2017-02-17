@@ -120,6 +120,20 @@ describe.only("V3 class", ()=>{
         });
       });
     });
+    describe("with invalid parameters", ()=>{
+      it("should return invalid parameters error if path is not string", (next)=>{
+        v3.get(111, {}).then().catch((err)=>{
+          assert.ok(err instanceof v3.InvalidParametersError, `actual type: ${typeof err}`);
+          next();
+        }); 
+      });
+      it("should return invalid parameters error if options is not object", (next)=>{
+        v3.get("/", 111).then().catch((err)=>{
+          assert.ok(err instanceof v3.InvalidParametersError, `actual type: ${typeof err}`);
+          next();
+        }); 
+      });
+    });
   });
 });
 //
