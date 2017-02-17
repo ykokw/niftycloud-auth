@@ -35,20 +35,20 @@ describe.only("V3 class", ()=>{
       endpoint
     );
     it("should return correct signature", ()=>{
-      const headers = {
+      const header = {
         "Content-Type": "application/octet-stream",
         "Date": "Wed, 29 Jun 2016 12:00:00 GMT"
       };
       const params = {
         method: "GET",
         url: url.parse("https://jp-east-2.os.cloud.nifty.com/"),
-        headers: headers,
-        queries: {}
+        header: header,
+        query: {}
       };
 
       v3.createSignature(params);
       const expectSignature = "AWS 12345678901234567890:tXIcRltLq+ueG9HWHZDfvT7ry+g=";
-      assert.equal(headers["Authorization"], expectSignature, "signature is not correct");
+      assert.equal(header["Authorization"], expectSignature, "signature is not correct");
     });
   });
   describe("stringToSign method", ()=>{
@@ -58,19 +58,19 @@ describe.only("V3 class", ()=>{
       endpoint
     );
     it("should return correct stringToSign when request get service of object storage api", ()=>{
-      const headers = {
+      const header = {
         "Content-Type": "application/octet-stream",
         "Date": "Wed, 29 Jun 2016 12:00:00 GMT"
       };
       const params = {
         method: "GET",
         url: url.parse("https://jp-east-2.os.cloud.nifty.com/"),
-        headers: headers,
-        queries: {}
+        header: header,
+        query: {}
       };
 
       const stringToSign = v3.stringToSign(params);
-    const expectStr = `${params.method}\n\n${headers["Content-Type"]}\n${headers["Date"]}\n/`;
+    const expectStr = `${params.method}\n\n${header["Content-Type"]}\n${header["Date"]}\n/`;
       assert.equal(stringToSign, expectStr, "strToSign is not correct");
     });
   });
@@ -92,7 +92,7 @@ describe.only("V3 class", ()=>{
       });
       it("should return correct response as Object in Callback", (next)=>{
         v3.sendRequestWithSignature("get", "/", {
-          headers: {
+          header: {
             "Content-Type": "application/xml"
           },
           callback: (err, res)=>{
@@ -109,7 +109,7 @@ describe.only("V3 class", ()=>{
       });
       it("should return correct response as Object in Promise", (next)=>{
         v3.sendRequestWithSignature("get", "/", {
-          headers: {
+          header: {
             "Content-Type": "application/xml"
           }
         }).then((res)=>{
@@ -129,8 +129,8 @@ describe.only("V3 class", ()=>{
           next();
         }); 
       });
-      it("should return invalid parameters error if options is not object", (next)=>{
-        v3.sendRequestWithSignature("get", "/", 111).then().catch((err)=>{
+      it("should return invalid parameters error if query is not object", (next)=>{
+        v3.sendRequestWithSignature("get", "/", {query: 111}).then().catch((err)=>{
           assert.ok(err instanceof v3.InvalidParametersError, `actual type: ${typeof err}`);
           next();
         }); 
