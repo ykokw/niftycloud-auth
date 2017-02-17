@@ -12,7 +12,7 @@ const Client = require("../../lib/signature/client");
 const endpoint = "https://east-1.cp.cloud.nifty.com";
 const exampleProxyEndpoint = "http://example.com";
 
-describe.only("Client class", ()=>{
+describe("Client class", ()=>{
   describe("constructor", ()=>{
     it("should set empty string as default parameter when parameter is not defined", ()=>{
       const cli = new Client();

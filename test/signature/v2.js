@@ -1,6 +1,6 @@
 "use strict";
 
-const assert      = require("chai").assert;
+const assert      = require("power-assert");
 const url         = require("url");
 const fs          = require("fs");
 const parseString = require('xml2js').parseString;
@@ -10,129 +10,112 @@ const NiftyCloud  = require("../../lib/niftycloud");
 
 const endpoint = "https://east-1.cp.cloud.nifty.com";
 
-const v2 = new NiftyCloud.V2(
-  "12345678901234567890",
-  "1234567890abcdefghijklmnopqrstuvwxyzABCD",
-  endpoint
-);
-
-describe("Signature ", ()=>{
-  describe("v2 library ", ()=>{
-    describe("createSignature method ", ()=>{
-      it("should return correct signature", ()=>{
-        const params = {
-          method: "GET",
-          url: url.parse("https://east-1.cp.cloud.nifty.com/api/?"),
-          queries: {"Action":"DescribeSecurityGroups"}
-        };
-
-        v2.createSignature(params);
-        const expectSignature = "3j8yjA3IoqFcYLhHiG7cuXaLPZ9UCY/BOnS2p7haV3Q=";
-        assert.equal(params.queries["Signature"], expectSignature, "signature is not correct");
-      });
+describe("V2 class", ()=>{
+  describe("constructor", ()=>{
+    it("should set empty string to api key as default parameter", ()=>{
+      const v2 = new NiftyCloud.V2();
+      assert.equal(v2.accessKey, "");
+      assert.equal(v2.secretKey, "");
     });
-    describe("get method ", ()=>{
-      beforeEach(()=>{
-        nock.cleanAll();
-      });
-      it("should return correct response as Object in Callback", (next)=>{
-        nock(endpoint).filteringPath((path)=>{return "/api/";})
-                      .get("/api/")
+    it("should set api key", ()=>{
+      const v2 = new NiftyCloud.V2(
+        "12345678901234567890",
+        "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+        endpoint
+      );
+      assert.equal(v2.accessKey, "12345678901234567890");
+      assert.equal(v2.secretKey, "1234567890abcdefghijklmnopqrstuvwxyzABCD");
+      assert.equal(v2.endpoint, endpoint);
+    });
+  });
+  describe("createSignature method ", ()=>{
+    const v2 = new NiftyCloud.V2(
+      "12345678901234567890",
+      "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+      endpoint
+    );
+    it("should return correct signature", ()=>{
+      const params = {
+        method: "GET",
+        url: url.parse("https://east-1.cp.cloud.nifty.com/api/?"),
+        queries: {"Action":"DescribeSecurityGroups"}
+      };
+
+      v2.createSignature(params);
+      const expectSignature = "3j8yjA3IoqFcYLhHiG7cuXaLPZ9UCY/BOnS2p7haV3Q=";
+      assert.equal(params.queries["Signature"], expectSignature, "signature is not correct");
+    });
+  });
+  describe("get method ", ()=>{
+    const v2 = new NiftyCloud.V2(
+      "12345678901234567890",
+      "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+      endpoint
+    );
+    describe("with valid request parameters", ()=>{
+      const path = "/api/";
+      const action = "RebootInstances";
+      const queries = {
+        "InstanceId.1":"server01"
+      };
+      before(()=>{
+        nock(endpoint).get(path)
+                      .times(2)
+                      .query((q)=>{
+                        if ( 'Action' in q &&
+                             'AccessKeyId' in q &&
+                              'SignatureMethod' in q &&
+                              'SignatureVersion' in q &&
+                              'Signature' in q) return true;
+                        return false;
+                      })
                       .replyWithFile(200,
                         "./test/mock/validResponse.xml",
                         {
                           "Content-Type":"application/xml"
                         });
-        v2.get({
-          Action: "RebootInstances",
-          "InstanceId.1": "server01"
-        }, (err, res)=>{
+      });
+      it("should return response in callback", (next)=>{
+        v2.get(path, action, queries, (err, res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
             assert(result !== null);
-            assert.deepEqual(res, result, "response didn't match");
+            assert.deepEqual(res.body, result);
             assert(err === null);
             next();
           });
-        });
+        }); 
       });
-      it("should return correct response as Object in Promise", (next)=>{
-        nock(endpoint).filteringPath((path)=>{return "/api/";})
-                      .get("/api/")
-                      .replyWithFile(200,
-                        "./test/mock/validResponse.xml",
-                        {
-                          "Content-Type":"application/xml"
-                        });
-        v2.get({
-          Action: "RebootInstances",
-          "InstanceId.1": "server01"
-        }).then((res)=>{
+      it("should return response in promise", (next)=>{
+        v2.get(path, action, queries).then((res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
-          parseString(expectResponseXml, (err, result)=>{
+          parseString(expectResponseXml, (parseErr, result)=>{
             assert(result !== null);
-            assert.deepEqual(res, result, "response didn't match");
+            assert.deepEqual(res.body, result);
             next();
           });
-        }).catch((err)=>{
-        });
+        }).catch(next); 
       });
-      it("should return error response as Object in Callback", (next)=>{
-        nock(endpoint).filteringPath((path)=>{return "/api/";})
-                      .get("/api/")
-                      .query({"Action":"InvalidAction"})
-                      .replyWithFile(400,
-                        "./test/mock/invalidResponse.xml",
-                        {
-                          "Content-Type":"application/xml"
-                        });
-        v2.get({
-          Action: "RebootInstances",
-          "InstanceId.1": "server01"
-        }, (err, res)=>{
-          const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
-          parseString(expectResponseXml, (parseErr, result)=>{
-            assert(res === null);
-            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
-            assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
-            next();
-          });
-        });
-      });
-      it("should return error response as Object in Promise", (next)=>{
-        nock(endpoint).filteringPath((path)=>{return "/api/";})
-                      .get("/api/")
-                      .query({"Action":"InvalidAction"})
-                      .replyWithFile(400,
-                        "./test/mock/invalidResponse.xml",
-                        {
-                          "Content-Type":"application/xml"
-                        });
-        v2.get({
-          Action: "InvalidAction",
-        }).then((res)=>{
-        }).catch((err)=>{
-          const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
-          parseString(expectResponseXml, (parseErr, result)=>{
-            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
-            assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
-            next();
-          });
-        });
-      });
-      it("should return Errors.InvalidParameters when option is null", (next)=>{
-        v2.get(null).then((res)=>{
-        }).catch((err)=>{
-          assert.ok(err instanceof NiftyCloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
+    });
+    describe("with invalid parameters", ()=>{
+      const path = "/api/";
+      it("should return invalid parameters error if action parameter is null", (next)=>{
+        v2.get(path, null, {}).then().catch((err)=>{
+          assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        });
+        }); 
       });
-      it("should return Errors.InvalidParameters when option is not specify api Action", (next)=>{
-        v2.get({"key": "value"}).then((res)=>{
-        }).catch((err)=>{
-          assert.ok(err instanceof NiftyCloud.Errors.InvalidParameterError, `actual type: ${typeof err}`);
+      it("should return invalid parameters error if action parameter is not string", (next)=>{
+        v2.get(path, 111, {}).then().catch((err)=>{
+          assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        });
+        }); 
+      });
+      it("should return invalid parameters error if query parameter is not object", (next)=>{
+        v2.get(path, "DummyAction", 111).then().catch((err)=>{
+          assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
+          next();
+        }); 
       });
     });
   });
