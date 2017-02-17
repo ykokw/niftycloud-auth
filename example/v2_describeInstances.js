@@ -2,9 +2,9 @@
 
 const NiftyCloud = require("../lib/niftycloud.js");
 
+const v2 = new NiftyCloud.V2(
   "YOUR_ACCESS_KEY",
   "YOUR_SECRET_ACCESS_KEY",
-const v2 = new NiftyCloud.V2(
   "https://east-1.cp.cloud.nifty.com"
 );
 
