@@ -41,7 +41,7 @@ describe("V3 class", ()=>{
       };
       const params = {
         method: "GET",
-        url: url.parse("https://jp-east-2.os.cloud.nifty.com/"),
+        path: "/",
         header: header,
         query: {}
       };
@@ -64,7 +64,7 @@ describe("V3 class", ()=>{
       };
       const params = {
         method: "GET",
-        url: url.parse("https://jp-east-2.os.cloud.nifty.com/"),
+        path: "/",
         header: header,
         query: {}
       };
