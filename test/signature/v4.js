@@ -212,25 +212,23 @@ describe("V4 class", ()=>{
     );
     describe("with header parameter", ()=>{
       before(()=>{
-        nock(endpoint, {
-          reqheaders: {
-            'content-type': 'application/json',
-            'x-nifty-date': function(dateValue){
-              if(dateValue) {
+        nock(endpoint)
+          .matchHeader('content-type', 'application/json')
+          .matchHeader('x-nifty-date', function(dateValue){
+              if(dateValue !== "") {
                 return true;
               } else {
                 return false;
               }
-            },
-            'authorization': function(authorizationValue){
-              if(authorizationValue) {
-                return true;
-              } else {
-                return false;
-              }
+            })
+          .matchHeader('authorization', function(authorizationValue){
+            if(authorizationValue !== "") {
+              return true;
+            } else {
+              return false;
             }
-          }
-        }).delete(path)
+          })
+          .delete(path)
           .reply(200, expectResponse);
       });
       it("should send header parameter in delete method", (next)=>{

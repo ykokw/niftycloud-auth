@@ -2,25 +2,24 @@
 
 const NiftyCloud = require("../lib/niftycloud.js");
 
-const niftyCloud = new NiftyCloud(
+const v4 = new NiftyCloud.V4(
   "YOUR_ACCESS_KEY",
   "YOUR_SECRET_ACCESS_KEY",
   "https://ess.api.cloud.nifty.com"
 );
 
-niftyCloud.V4.post("/", {}, {}, {
-  "Action":"SendEmail",
-  "Version":"2010-12-01",
-  "Destination.ToAddresses.member.1": "your.destination.address@example.com",
-  "Source": "your.source.address@example.com",
-  "Message.Subject.Data": "testFromApi",
-  "Message.Body.Text.Data": "testFromApi"
-}, "email", "east-1").then((res)=>{
-  console.log("res:" + JSON.stringify(res));
-}).catch((err)=>{
-  if (err instanceof niftyCloud.Errors.ApiError) {
-    console.log("err:" + err);
+v4.post("/", "east-1", "email", {
+  body: {
+    "Action":"SendEmail",
+    "Version":"2010-12-01",
+    "Destination.ToAddresses.member.1": "0k4w4.yuk1@gmail.com",
+    "Source": "okawa.yuki@nifty.co.jp",
+    "Message.Subject.Data": "testFromApi",
+    "Message.Body.Text.Data": "testFromApi"
   }
-  console.log("err:" + err);
+}).then((res)=>{
+  console.log(res.body);
+}).catch((err)=>{
+  console.log(err);
 });
 

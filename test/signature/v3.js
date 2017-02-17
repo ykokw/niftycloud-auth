@@ -147,25 +147,23 @@ describe("V3 class", ()=>{
     );
     describe("with header parameter", ()=>{
       before(()=>{
-        nock(endpoint, {
-          reqheaders: {
-            'content-type': 'application/json',
-            'date': function(dateValue){
-              if(dateValue) {
+        nock(endpoint)
+          .matchHeader('content-type', 'application/json')
+          .matchHeader('date', function(dateValue){
+              if(dateValue !== "") {
                 return true;
               } else {
                 return false;
               }
-            },
-            'authorization': function(authorizationValue){
-              if(authorizationValue) {
-                return true;
-              } else {
-                return false;
-              }
+            })
+          .matchHeader('authorization', function(authorizationValue){
+            if(authorizationValue !== "") {
+              return true;
+            } else {
+              return false;
             }
-          }
-        }).delete(path)
+          })
+          .delete(path)
           .reply(200, expectResponse);
       });
       it("should send header parameter in delete method", (next)=>{

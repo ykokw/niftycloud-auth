@@ -2,20 +2,18 @@
 
 const NiftyCloud = require("../lib/niftycloud.js");
 
-const niftyCloud = new NiftyCloud(
+const v3 = new NiftyCloud.V3(
   "YOUR_ACCESS_KEY",
   "YOUR_SECRET_ACCESS_KEY",
   "https://jp-east-2.os.cloud.nifty.com"
 );
 
-const fs = require("fs");
-
-niftyCloud.V3.delete("/first-bucket/script.png", {
-  "Content-Type":"image/png"
-}, null).then((res)=>{
+v3.delete("/first-bucket/niftycloud.png", {
+  header: {
+    "Content-Type":"image/png"
+  },
+}).then((res)=>{
   console.log("res:" + res.status);
 }).catch((err)=>{
-  if (err instanceof niftyCloud.Errors.ApiError) {
-    console.log("err:" + JSON.stringify(err));
-  }
+  console.log(err);
 });
