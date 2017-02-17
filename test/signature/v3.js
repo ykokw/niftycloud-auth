@@ -74,6 +74,53 @@ describe.only("V3 class", ()=>{
       assert.equal(stringToSign, expectStr, "strToSign is not correct");
     });
   });
+  describe("get method", ()=>{
+    const v3 = new NiftyCloud.V3(
+      "12345678901234567890",
+      "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+      endpoint
+    );
+    describe("with valid request parameters", ()=>{
+      before(()=>{
+        nock(endpoint).get("/")
+                      .times(2)
+                      .replyWithFile(200,
+                        "./test/mock/validResponseOfGetService.xml",
+                        {
+                          "Content-Type":"application/xml"
+                        });
+      });
+      it("should return correct response as Object in Callback", (next)=>{
+        v3.get("/", {
+          headers: {
+            "Content-Type": "application/xml"
+          }
+        }, (err, res)=>{
+          const expectResponseXml = fs.readFileSync("./test/mock/validResponseOfGetService.xml");
+          parseString(expectResponseXml, (parseErr, result)=>{
+            assert(result !== null);
+            assert.deepEqual(res.body, result);
+            assert(err === null);
+            next();
+          });
+        });
+      });
+      it("should return correct response as Object in Promise", (next)=>{
+        v3.get("/", {
+          headers: {
+            "Content-Type": "application/xml"
+          }
+        }).then((res)=>{
+          const expectResponseXml = fs.readFileSync("./test/mock/validResponseOfGetService.xml");
+          parseString(expectResponseXml, (parseErr, result)=>{
+            assert(result !== null);
+            assert.deepEqual(res.body, result);
+            next();
+          });
+        });
+      });
+    });
+  });
 });
 //
 //    describe("get method ", ()=>{
