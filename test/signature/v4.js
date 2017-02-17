@@ -12,7 +12,7 @@ const NiftyCloud  = require("../../lib/niftycloud");
 const endpoint = "https://east-1.cp.cloud.nifty.com";
 
 
-describe.only("V4 class", ()=>{
+describe("V4 class", ()=>{
   describe("constructor", ()=>{
     it("should set empty string to api key as default parameter", ()=>{
       const v4 = new NiftyCloud.V4();
@@ -200,94 +200,88 @@ describe.only("V4 class", ()=>{
       });
     });
   });
+  describe("api request method", ()=>{
+    const path = "/";
+    const region = "east-1";
+    const serviceId = "rdb";
+    const expectResponse = {"result":"ok"};
+    const v4 = new NiftyCloud.V4(
+      "12345678901234567890",
+      "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+      endpoint
+    );
+    describe("with header parameter", ()=>{
+      before(()=>{
+        nock(endpoint, {
+          reqheaders: {
+            'content-type': 'application/json',
+            'x-nifty-date': function(dateValue){
+              if(dateValue) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+            'authorization': function(authorizationValue){
+              if(authorizationValue) {
+                return true;
+              } else {
+                return false;
+              }
+            }
+          }
+        }).delete(path)
+          .reply(200, expectResponse);
+      });
+      it("should send header parameter in delete method", (next)=>{
+        v4.delete(path, region, serviceId, {
+          header: {"Content-Type": "application/json"}
+        }).then((res)=>{
+          assert.deepEqual(res.body, expectResponse);
+          next();
+        });
+      });
+    });
+    describe("with query parameter in get method", ()=>{
+      before(()=>{
+        nock(endpoint).get(path)
+                      .query({key: "value"}) 
+                      .reply(200, expectResponse);
+      });
+      it("should send query parameter", (next)=>{
+        v4.get(path, region, serviceId, {
+          query: {key: "value"}
+        }).then((res)=>{
+          assert.deepEqual(res.body, expectResponse);
+          next();
+        });
+      });
+    });
+    describe("with body parameter in put and post method", ()=>{
+      before(()=>{
+        nock(endpoint).post(path, {key: "value"})
+                      .reply(200, expectResponse);
+        nock(endpoint).put(path, {key: "value"})
+                      .reply(200, expectResponse);
+      });
+      it("should send body parameter in post method", (next)=>{
+        v4.post(path, region, serviceId, {
+          header: {"content-type":"application/json"},
+          body: {key: "value"}
+        }).then((res)=>{
+          assert.deepEqual(res.body, expectResponse);
+          next();
+        }).catch((err)=>{console.log(err);console.log(res);});
+      });
+      it("should send body parameter in put method", (next)=>{
+        v4.put(path, region, serviceId, {
+          header: {"content-type":"application/json"},
+          body: {key: "value"}
+        }).then((res)=>{
+          assert.deepEqual(res.body, expectResponse);
+          next();
+        });
+      });
+    });
+  });
 });
-//
-//    describe("get method", ()=>{
-//      beforeEach(()=>{
-//        nock.cleanAll();
-//      });
-//      it("should return correct response as Object in Callback", (next)=>{
-//        nock(endpoint).filteringPath((path)=>{return "/api/";})
-//                      .get("/api/")
-//                      .replyWithFile(200,
-//                        "./test/mock/validResponse.xml",
-//                        {
-//                          "Content-Type":"application/xml"
-//                        });
-//        v4.get("/", {}, {
-//          Action: "DescribeDBInstances",
-//        }, "rdb", "east-1", (err, res)=>{
-//          const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
-//          parseString(expectResponseXml, (parseErr, result)=>{
-//            assert(result !== null);
-//            assert.deepEqual(res, result, "response didn't match");
-//            assert(err === null);
-//            next();
-//          });
-//        });
-//      });
-//      it("should return correct response as Object in Promise", (next)=>{
-//        nock(endpoint).filteringPath((path)=>{return "/api/";})
-//                      .get("/api/")
-//                      .replyWithFile(200,
-//                        "./test/mock/validResponse.xml",
-//                        {
-//                          "Content-Type":"application/xml"
-//                        });
-//        v4.get("/", {}, {
-//          Action: "DescribeDBInstances",
-//        }, "rdb", "east-1").then((res)=>{
-//          const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
-//          parseString(expectResponseXml, (err, result)=>{
-//            assert(result !== null);
-//            assert.deepEqual(res, result, "response didn't match");
-//            next();
-//          });
-//        }).catch((err)=>{
-//        });
-//      });
-//      it("should return error response as Object in Callback", (next)=>{
-//        nock(endpoint).filteringPath((path)=>{return "/api/";})
-//                      .get("/api/")
-//                      .query({"Action":"InvalidAction"})
-//                      .replyWithFile(400,
-//                        "./test/mock/invalidResponse.xml",
-//                        {
-//                          "Content-Type":"application/xml"
-//                        });
-//        v4.get("/", {}, {
-//          Action: "DescribeDBInstances",
-//        }, "rdb", "east-1", (err, res)=>{
-//          const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
-//          parseString(expectResponseXml, (parseErr, result)=>{
-//            assert(res === null);
-//            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
-//            assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
-//            next();
-//          });
-//        });
-//      });
-//      it("should return error response as Object in Promise", (next)=>{
-//        nock(endpoint).filteringPath((path)=>{return "/api/";})
-//                      .get("/api/")
-//                      .query({"Action":"InvalidAction"})
-//                      .replyWithFile(400,
-//                        "./test/mock/invalidResponse.xml",
-//                        {
-//                          "Content-Type":"application/xml"
-//                        });
-//        v4.get("/", {}, {
-//          Action: "DescribeDBInstances",
-//        }, "rdb", "east-1").then((res)=>{
-//        }).catch((err)=>{
-//          const expectResponseXml = fs.readFileSync("./test/mock/invalidResponse.xml");
-//          parseString(expectResponseXml, (parseErr, result)=>{
-//            assert.ok(err instanceof NiftyCloud.Errors.ApiError, `actual type: ${typeof err}`);
-//            assert.deepEqual(err.response, result, `response did not match:${JSON.stringify(err)} with ${JSON.stringify(result)}`);
-//            next();
-//          });
-//        });
-//      });
-//    });
-//  });
-//});

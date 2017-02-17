@@ -149,7 +149,21 @@ describe("V3 class", ()=>{
       before(()=>{
         nock(endpoint, {
           reqheaders: {
-            'content-type': 'application/json'
+            'content-type': 'application/json',
+            'date': function(dateValue){
+              if(dateValue) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+            'authorization': function(authorizationValue){
+              if(authorizationValue) {
+                return true;
+              } else {
+                return false;
+              }
+            }
           }
         }).delete(path)
           .reply(200, expectResponse);
