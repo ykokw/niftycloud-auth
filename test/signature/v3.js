@@ -94,15 +94,17 @@ describe.only("V3 class", ()=>{
         v3.get("/", {
           headers: {
             "Content-Type": "application/xml"
+          },
+          callback: (err, res)=>{
+            console.log(err);
+            const expectResponseXml = fs.readFileSync("./test/mock/validResponseOfGetService.xml");
+            parseString(expectResponseXml, (parseErr, result)=>{
+              assert(result !== null);
+              assert.deepEqual(res.body, result);
+              assert(err === null);
+              next();
+            });
           }
-        }, (err, res)=>{
-          const expectResponseXml = fs.readFileSync("./test/mock/validResponseOfGetService.xml");
-          parseString(expectResponseXml, (parseErr, result)=>{
-            assert(result !== null);
-            assert.deepEqual(res.body, result);
-            assert(err === null);
-            next();
-          });
         });
       });
       it("should return correct response as Object in Promise", (next)=>{
