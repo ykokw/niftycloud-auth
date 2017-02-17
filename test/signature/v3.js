@@ -137,4 +137,74 @@ describe.only("V3 class", ()=>{
       });
     });
   });
+  describe("api request method", ()=>{
+    const path = "/";
+    const expectResponse = {"result":"ok"};
+    const v3 = new NiftyCloud.V3(
+      "12345678901234567890",
+      "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+      endpoint
+    );
+    describe("with header parameter", ()=>{
+      before(()=>{
+        nock(endpoint, {
+          reqheaders: {
+            'content-type': 'application/json'
+          }
+        }).delete(path)
+          .reply(200, expectResponse);
+      });
+      it("should send header parameter in delete method", (next)=>{
+        v3.delete(path, {
+          header: {"Content-Type": "application/json"}
+        }).then((res)=>{
+          assert.deepEqual(res.body, expectResponse);
+          next();
+        });
+      });
+    });
+    describe("with query parameter in get method", ()=>{
+      before(()=>{
+        nock(endpoint).get(path)
+                      .query({key: "value"}) 
+                      .reply(200, expectResponse);
+      });
+      it("should send query parameter", (next)=>{
+        v3.get(path, {
+          query: {key: "value"}
+        }).then((res)=>{
+          assert.deepEqual(res.body, expectResponse);
+          next();
+        });
+      });
+    });
+    describe("with body parameter in put and post method", ()=>{
+      before(()=>{
+        nock(endpoint).post(path, {key: "value"})
+        //nock(endpoint).post(path)
+                      .reply(200, expectResponse);
+        nock(endpoint).put(path, {key: "value"})
+        //nock(endpoint).put(path)
+                      .reply(200, expectResponse);
+      });
+      it("should send body parameter in post method", (next)=>{
+        v3.post(path, {
+          header: {"content-type":"application/json"},
+          body: {key: "value"}
+        }).then((res)=>{
+          assert.deepEqual(res.body, expectResponse);
+          next();
+        }).catch((err)=>{console.log(err);console.log(res);});
+      });
+      it("should send body parameter in put method", (next)=>{
+        v3.put(path, {
+          header: {"content-type":"application/json"},
+          body: {key: "value"}
+        }).then((res)=>{
+          assert.deepEqual(res.body, expectResponse);
+          next();
+        });
+      });
+    });
+  });
 });
