@@ -1,6 +1,6 @@
 "use strict";
 
-const assert      = require("chai").assert;
+const assert      = require("power-assert");
 const url         = require("url");
 const fs          = require("fs");
 const qs          = require("qs");
