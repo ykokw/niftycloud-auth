@@ -58,7 +58,7 @@ describe("Client class", ()=>{
     const xmlType = 'application/xml';
     before(()=>{
       nock(endpoint, {
-        reqheaders: {
+        reqheader: {
           'content-type': defaultType
         }
       }).get("/api")
@@ -69,7 +69,7 @@ describe("Client class", ()=>{
           });
 
       nock(endpoint, {
-        reqheaders: {
+        reqheader: {
           'content-type': jsonType
         }
       }).get("/api").reply(200, {"result":"ok"});
@@ -85,12 +85,12 @@ describe("Client class", ()=>{
         next();
       }).catch(next);
     });
-    it("should return request object with customize headers", (next)=>{
+    it("should return request object with customize header", (next)=>{
       const client = new Client(
         endpoint
       );
       const req = client.createRequest("get", endpoint + "/api", {
-        headers: {"content-type": jsonType}
+        header: {"content-type": jsonType}
       });
       req.then((res)=>{
         assert.equal(res.status, 200);
@@ -125,7 +125,7 @@ describe("Client class", ()=>{
                       });
 
       nock(endpoint, {
-        reqheaders: {
+        reqheader: {
           'content-type': 'application/json'
         }
       }).get("/api/validJsonResponse").times(2).reply(200, {"result":"ok"});
@@ -188,7 +188,7 @@ describe("Client class", ()=>{
     });
     it("shoud return valid json response as Object in callback", (next)=>{
       const params = {
-        headers: {"content-type":"application/json"},
+        header: {"content-type":"application/json"},
         cb    : (err, res)=>{
           assert(err === null);
           assert.deepEqual(res.body, {"result":"ok"});
@@ -200,7 +200,7 @@ describe("Client class", ()=>{
     });
     it("shoud return valid json response as Object in promise", (next)=>{
       client.sendRequest("get", "/api/validJsonResponse", {
-        headers: {"content-type":"application/json"}
+        header: {"content-type":"application/json"}
       }).then((res)=>{
         assert.deepEqual(res.body, {"result":"ok"});
         next();
@@ -336,11 +336,11 @@ describe("Client class", ()=>{
       const invalidClient = new Client(
         endpoint
       );
-      invalidClient.sendRequest("get", "/api", {headers:"content-type: application/json"}).then((res)=>{}).catch((err)=>{
+      invalidClient.sendRequest("get", "/api", {header:"content-type: application/json"}).then((res)=>{}).catch((err)=>{
         assert(err instanceof client.InvalidParametersError);
         assert.equal(err.name, "InvalidParametersError");
         assert.equal(err.message, "Request parameters is invalid");
-        assert.equal(err.result[0].path, "options.headers");
+        assert.equal(err.result[0].path, "options.header");
         next();
       });
     });

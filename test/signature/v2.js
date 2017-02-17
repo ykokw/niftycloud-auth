@@ -38,12 +38,12 @@ describe("V2 class", ()=>{
       const params = {
         method: "GET",
         url: url.parse("https://east-1.cp.cloud.nifty.com/api/?"),
-        queries: {"Action":"DescribeSecurityGroups"}
+        query: {"Action":"DescribeSecurityGroups"}
       };
 
       v2.createSignature(params);
       const expectSignature = "3j8yjA3IoqFcYLhHiG7cuXaLPZ9UCY/BOnS2p7haV3Q=";
-      assert.equal(params.queries["Signature"], expectSignature, "signature is not correct");
+      assert.equal(params.query["Signature"], expectSignature, "signature is not correct");
     });
   });
   describe("get method ", ()=>{
@@ -55,7 +55,7 @@ describe("V2 class", ()=>{
     describe("with valid request parameters", ()=>{
       const path = "/api/";
       const action = "RebootInstances";
-      const queries = {
+      const query = {
         "InstanceId.1":"server01"
       };
       before(()=>{
@@ -76,18 +76,21 @@ describe("V2 class", ()=>{
                         });
       });
       it("should return response in callback", (next)=>{
-        v2.get(path, action, queries, (err, res)=>{
-          const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
-          parseString(expectResponseXml, (parseErr, result)=>{
-            assert(result !== null);
-            assert.deepEqual(res.body, result);
-            assert(err === null);
-            next();
-          });
+        v2.get(path, action, {
+          query   : query,
+          callback: (err, res)=>{
+            const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
+            parseString(expectResponseXml, (parseErr, result)=>{
+              assert(result !== null);
+              assert.deepEqual(res.body, result);
+              assert(err === null);
+              next();
+            });
+          }
         }); 
       });
       it("should return response in promise", (next)=>{
-        v2.get(path, action, queries).then((res)=>{
+        v2.get(path, action, {query: query}).then((res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
           parseString(expectResponseXml, (parseErr, result)=>{
             assert(result !== null);
@@ -112,7 +115,7 @@ describe("V2 class", ()=>{
         }); 
       });
       it("should return invalid parameters error if query parameter is not object", (next)=>{
-        v2.get(path, "DummyAction", 111).then().catch((err)=>{
+        v2.get(path, "DummyAction", {query: 111}).then().catch((err)=>{
           assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
           next();
         }); 
