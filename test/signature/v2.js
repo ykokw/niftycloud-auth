@@ -10,7 +10,6 @@ const NiftyCloud  = require("../../lib/niftycloud");
 
 const endpoint = "https://east-1.cp.cloud.nifty.com";
 
-
 describe.only("V2 class", ()=>{
   describe("constructor", ()=>{
     it("should set empty string to api key as default parameter", ()=>{
@@ -47,12 +46,54 @@ describe.only("V2 class", ()=>{
       assert.equal(params.queries["Signature"], expectSignature, "signature is not correct");
     });
   });
-  //describe("get method ", ()=>{
-  //  it("should return response with valid request parameters", ()=>{});
-  //  it("should set empty string as default action parameters", ()=>{});
-  //  it("should set empty object as default query parameter", ()=>{});
-  //  it("should set query parameter object", ()=>{});
-  //  it("should return invalid parameters error if action parameter is invalid", ()=>{});
-  //  it("should return invalid parameters error if query parameter is invalid", ()=>{});
-  //});
+  describe("get method ", ()=>{
+    describe("with valid request parameters", ()=>{
+      const v2 = new NiftyCloud.V2(
+        "12345678901234567890",
+        "1234567890abcdefghijklmnopqrstuvwxyzABCD",
+        endpoint
+      );
+      const path = "/api/";
+      const action = "RebootInstances";
+      const queries = {
+        "InstanceId.1":"server01"
+      };
+      before(()=>{
+        nock(endpoint).get(path)
+                      .times(2)
+                      .query((q)=>{
+                        if ( 'Action' in q &&
+                             'AccessKeyId' in q &&
+                              'SignatureMethod' in q &&
+                              'SignatureVersion' in q &&
+                              'Signature' in q) return true;
+                        return false;
+                      })
+                      .replyWithFile(200,
+                        "./test/mock/validResponse.xml",
+                        {
+                          "Content-Type":"application/xml"
+                        });
+      });
+      it("should return response in callback", (next)=>{
+        v2.get(path, action, queries, (err, res)=>{
+          const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
+          parseString(expectResponseXml, (parseErr, result)=>{
+            assert(result !== null);
+            assert.deepEqual(res.body, result);
+            assert(err === null);
+            next();
+          });
+        }); 
+        
+      });
+    });
+    //it("should return response in promise when send valid request parameters", ()=>{
+    //});
+    //it("should set empty string as default action parameters", ()=>{});
+    //it("should set empty object as default query parameter", ()=>{});
+    //it("should set query parameter object", ()=>{});
+    //it("should return invalid parameters error if action parameter is invalid", ()=>{});
+    //it("should return invalid parameters error if query parameter is invalid", ()=>{});
+  });
 });
