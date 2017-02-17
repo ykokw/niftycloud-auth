@@ -179,8 +179,26 @@ describe.only("V4 class", ()=>{
         });
       });
     });
-    //describe("with invalid request parameters", ()=>{
-    //});
+    describe("with invalid request parameters", ()=>{
+      it("should return invalid parameters error if path is not string", (next)=>{
+        v4.sendRequestWithSignature("get", 111, "east-1", "rdb", {}).then().catch((err)=>{
+          assert.ok(err instanceof v4.InvalidParametersError, `actual type: ${typeof err}`);
+          next();
+        }); 
+      });
+      it("should return invalid parameters error if region is not string", (next)=>{
+        v4.sendRequestWithSignature("get", "/", 111, "rdb", {}).then().catch((err)=>{
+          assert.ok(err instanceof v4.InvalidParametersError, `actual type: ${typeof err}`);
+          next();
+        }); 
+      });
+      it("should return invalid parameters error if serviceId is not string", (next)=>{
+        v4.sendRequestWithSignature("get", "/", "east-1", 111, {}).then().catch((err)=>{
+          assert.ok(err instanceof v4.InvalidParametersError, `actual type: ${typeof err}`);
+          next();
+        }); 
+      });
+    });
   });
 });
 //
