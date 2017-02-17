@@ -10,7 +10,7 @@ const NiftyCloud  = require("../../lib/niftycloud");
 
 const endpoint = "https://jp-east-2.os.cloud.nifty.com";
 
-describe.only("V3 class", ()=>{
+describe("V3 class", ()=>{
   describe("constructor", ()=>{
     it("should set empty string to api key as default parameter", ()=>{
       const v3 = new NiftyCloud.V3();
