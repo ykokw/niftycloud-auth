@@ -54,8 +54,8 @@ describe("Client class", ()=>{
   });
   describe("createRequest method", ()=>{
     const defaultType = 'application/x-www-form-urlencoded;charset=UTF-8';
-    const jsonType = 'application/json';
-    const xmlType = 'application/xml';
+    const jsonType = 'application/json;charset=utf-8';
+    const xmlType = 'application/xml;charset=utf-8';
     before(()=>{
       nock(endpoint, {
         reqheader: {
