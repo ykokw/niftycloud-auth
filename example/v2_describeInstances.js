@@ -11,7 +11,7 @@ const v2 = new NiftyCloud.V2(
 v2.get( "/api/", "DescribeInstances", {}).then((res)=>{
   console.log("res:" + JSON.stringify(res.body));
 }).catch((err)=>{
-  if (err instanceof niftyCloud.Errors.ApiError) {
+  if (err instanceof v2.ApiError) {
     console.log("err:" + err);
   }
 });
