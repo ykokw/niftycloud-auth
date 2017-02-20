@@ -11,6 +11,11 @@ const Client = require("../../lib/signature/client");
 
 const endpoint = "https://east-1.cp.cloud.nifty.com";
 const exampleProxyEndpoint = "http://example.com";
+const defaultType = 'application/x-www-form-urlencoded;charset=UTF-8';
+const jsonType = 'application/json;charset=utf-8';
+const xmlType = 'application/xml;charset=utf-8';
+const textXmlType = 'text/xml;charset=utf-8';
+const textType = 'text/plain;charset=utf-8';
 
 describe("Client class", ()=>{
   describe("constructor", ()=>{
@@ -53,9 +58,6 @@ describe("Client class", ()=>{
     });
   });
   describe("createRequest method", ()=>{
-    const defaultType = 'application/x-www-form-urlencoded;charset=UTF-8';
-    const jsonType = 'application/json;charset=utf-8';
-    const xmlType = 'application/xml;charset=utf-8';
     before(()=>{
       nock(endpoint, {
         reqheader: {
@@ -67,7 +69,7 @@ describe("Client class", ()=>{
           {
             "Content-Type": xmlType
           });
-
+      
       nock(endpoint, {
         reqheader: {
           'content-type': jsonType
@@ -94,7 +96,7 @@ describe("Client class", ()=>{
       });
       req.then((res)=>{
         assert.equal(res.status, 200);
-        assert.equal(res.header["content-type"], jsonType);
+        assert.deepEqual(res.body, {"result":"ok"});
         next();
       }).catch(next);
     });
@@ -121,8 +123,20 @@ describe("Client class", ()=>{
                     .replyWithFile(200,
                       "./test/mock/validResponse.xml",
                       {
-                        "Content-Type":"application/xml"
+                        "Content-Type": xmlType
                       });
+      
+      nock(endpoint, {
+        reqheader: {
+          'content-type': defaultType
+        }
+      }).get("/api/textXmlResponse")
+        .replyWithFile(200,
+          "./test/mock/validResponse.xml",
+          {
+            "Content-Type": textXmlType
+          });
+
 
       nock(endpoint, {
         reqheader: {
@@ -133,14 +147,14 @@ describe("Client class", ()=>{
       nock(endpoint).get("/api/validStringResponse")
                     .times(2)
                     .reply(200, "ok", {
-                      "Content-Type":"text/plain"
+                      "Content-Type":textType
                     });
 
       nock(endpoint).get("/api/validEmptyResponse")
                     .times(2)
                     .reply(204, null,
                       {
-                        "Content-Type":"application/xml"
+                        "Content-Type":xmlType
                       });
 
       nock(endpoint).get("/api/brokenXmlResponse")
@@ -148,7 +162,7 @@ describe("Client class", ()=>{
                     .replyWithFile(200,
                       "./test/mock/brokenResponse.xml",
                       {
-                        "Content-Type":"application/xml"
+                        "Content-Type":xmlType
                       });
 
       nock(endpoint).get("/api/errorXmlResponse")
@@ -156,7 +170,7 @@ describe("Client class", ()=>{
                     .replyWithFile(400,
                       "./test/mock/errorResponse.xml",
                       {
-                        "Content-Type":"application/xml"
+                        "Content-Type":xmlType
                       });
 
       nock(endpoint).get("/api/errorJsonResponse")
@@ -186,9 +200,19 @@ describe("Client class", ()=>{
         });
       }).catch(next);
     });
+    it("shoud return valid text xml response as Object in promise", (next)=>{
+      client.sendRequest("get", "/api/textXmlResponse").then((res)=>{
+        const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
+        parseString(expectResponseXml, (parseErr, result)=>{
+          assert(parseErr === null);
+          assert.deepEqual(res.body, result, "response didn't match");
+          next();
+        });
+      }).catch(next);
+    });
     it("shoud return valid json response as Object in callback", (next)=>{
       const params = {
-        header: {"content-type":"application/json"},
+        header: {"content-type":jsonType},
         cb    : (err, res)=>{
           assert(err === null);
           assert.deepEqual(res.body, {"result":"ok"});
@@ -200,7 +224,7 @@ describe("Client class", ()=>{
     });
     it("shoud return valid json response as Object in promise", (next)=>{
       client.sendRequest("get", "/api/validJsonResponse", {
-        header: {"content-type":"application/json"}
+        header: {"content-type":jsonType}
       }).then((res)=>{
         assert.deepEqual(res.body, {"result":"ok"});
         next();
