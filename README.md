@@ -255,5 +255,5 @@ v4.post("/", "east-1", "email", {
 - InvalidParameterError: Error for Invalid parameters
     - Parameters: `error.name`, `error.message`, `error.results` (array of detail messages)
 - ApiError: Error for API Response returns 4xx or 5xx
-    - Parameters: `error.name`, `error.message`, `error.statusCode` (HTTP Status Code), `error.errorCode` (Error Code of [NIFTYCloud API](http://cloud.nifty.com/api/rest/errorcode.htm))
+    - Parameters: `error.name`, `error.message`, `error.statusCode` (HTTP Status Code), `error.errorCode` (Error Code of [NIFTY Cloud API](http://cloud.nifty.com/api/rest/errorcode.htm))
 
