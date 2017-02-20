@@ -6,7 +6,7 @@ CAUTION: EXPERIMENTAL CODE
 
 This is the SDK for NIFTY Cloud API to make authentication parameters of API request.
 
-## install
+## Install
 
 ```
 npm install niftycloud-auth
@@ -16,12 +16,12 @@ npm install niftycloud-auth
 
 There is classes that maekes signature parameters for signature version 2 / 3 / 4.
 
-First, you need to create instance of class of signature version that you want to request. 
+First, you need to create instance of class of signature version that you want to request.   
 Then, you can request api with some parameters. Please visit [NIFTY Cloud API Reference page](http://cloud.nifty.com/api/rest/) to know about API endpoint, path and required parameters.
 
 All api request method is avaiable both callback `(err, res)=>{}` and promise chain.
 
-If content type of response is xml, `response.body` property includes result ofparsing xml by [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js)
+If content type of response is xml, `response.body` property includes result ofparsing xml by [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js).  
 Other response parameter is same as [Superagent](https://github.com/visionmedia/superagent)
 
 ```javascript
