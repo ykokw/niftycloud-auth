@@ -172,6 +172,20 @@ describe("Client class", ()=>{
                       {
                         "Content-Type":xmlType
                       });
+      
+      nock(endpoint).get("/api/errorXmlResponseOfObjectStorage")
+                    .replyWithFile(403,
+                      "./test/mock/errorResponseOfObjectStorage.xml",
+                      {
+                        "Content-Type":xmlType
+                      });
+      
+      nock(endpoint).get("/api/errorXmlResponseOfRDB")
+                    .replyWithFile(403,
+                      "./test/mock/errorResponseOfRDB.xml",
+                      {
+                        "Content-Type":xmlType
+                      });
 
       nock(endpoint).get("/api/errorJsonResponse")
                     .reply(400, {"error":"k"});
@@ -292,6 +306,32 @@ describe("Client class", ()=>{
         parseString(expectResponseXml, (parseErr, result)=>{
           assert.equal(err.errorCode, result.Response.Errors[0].Error[0].Code[0]);
           assert.equal(err.message, result.Response.Errors[0].Error[0].Message[0]);
+          next();
+        });
+      });
+    });
+    it("shoud return api error response of Object storage as Object in promise", (next)=>{
+      client.sendRequest("get", "/api/errorXmlResponseOfObjectStorage").then((res)=>{}).catch((err)=>{
+        assert(err instanceof client.ApiError);
+        assert.equal(err.name, "ApiError");
+        assert.equal(err.statusCode, 403);
+        const expectResponseXml = fs.readFileSync("./test/mock/errorResponseOfObjectStorage.xml");
+        parseString(expectResponseXml, (parseErr, result)=>{
+          assert.equal(err.errorCode, result.Error.Code[0]);
+          assert.equal(err.message, "Api returns error");
+          next();
+        });
+      });
+    });
+    it("shoud return api error response of RDB as Object in promise", (next)=>{
+      client.sendRequest("get", "/api/errorXmlResponseOfRDB").then((res)=>{}).catch((err)=>{
+        assert(err instanceof client.ApiError);
+        assert.equal(err.name, "ApiError");
+        assert.equal(err.statusCode, 403);
+        const expectResponseXml = fs.readFileSync("./test/mock/errorResponseOfRDB.xml");
+        parseString(expectResponseXml, (parseErr, result)=>{
+          assert.equal(err.errorCode, result.ErrorResponse.Error[0].Code[0]);
+          assert.equal(err.message, result.ErrorResponse.Error[0].Message[0]);
           next();
         });
       });
