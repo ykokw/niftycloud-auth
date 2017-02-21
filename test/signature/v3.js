@@ -98,7 +98,7 @@ describe("V3 class", ()=>{
           callback: (err, res)=>{
             console.log(err);
             const expectResponseXml = fs.readFileSync("./test/mock/validResponseOfGetService.xml");
-            parseString(expectResponseXml, (parseErr, result)=>{
+            parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
               assert(result !== null);
               assert.deepEqual(res.body, result);
               assert(err === null);
@@ -114,7 +114,7 @@ describe("V3 class", ()=>{
           }
         }).then((res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/validResponseOfGetService.xml");
-          parseString(expectResponseXml, (parseErr, result)=>{
+          parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
             assert(result !== null);
             assert.deepEqual(res.body, result);
             next();

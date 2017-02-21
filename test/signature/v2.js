@@ -80,7 +80,7 @@ describe("V2 class", ()=>{
           query   : query,
           callback: (err, res)=>{
             const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
-            parseString(expectResponseXml, (parseErr, result)=>{
+            parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
               assert(result !== null);
               assert.deepEqual(res.body, result);
               assert(err === null);
@@ -92,7 +92,7 @@ describe("V2 class", ()=>{
       it("should return response in promise", (next)=>{
         v2.get(path, action, {query: query}).then((res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
-          parseString(expectResponseXml, (parseErr, result)=>{
+          parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
             assert(result !== null);
             assert.deepEqual(res.body, result);
             next();

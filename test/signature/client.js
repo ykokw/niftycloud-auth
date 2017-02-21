@@ -108,7 +108,7 @@ describe("Client class", ()=>{
       );
       const xml = '<RebootInstancesResponse xmlns="https://cp.cloud.nifty.com/api/"> <requestId>ad2adb5f-3b7a-4574-9b7d-8dd49f6dad4e</requestId><return>true</return></RebootInstancesResponse>';
       client.parseXml("resonse", xml).then((res)=>{
-        assert.equal(res["RebootInstancesResponse"]["requestId"][0], "ad2adb5f-3b7a-4574-9b7d-8dd49f6dad4e");
+        assert.equal(res["RebootInstancesResponse"]["requestId"], "ad2adb5f-3b7a-4574-9b7d-8dd49f6dad4e");
         next();
       }).catch(next);
     });
@@ -194,7 +194,7 @@ describe("Client class", ()=>{
       const params = {
         cb    : (err, res)=>{
           const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
-          parseString(expectResponseXml, (parseErr, result)=>{
+          parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
             assert(err === null);
             assert(parseErr === null);
             assert.deepEqual(res.body, result, "response didn't match");
@@ -207,7 +207,7 @@ describe("Client class", ()=>{
     it("shoud return valid xml response as Object in promise", (next)=>{
       client.sendRequest("get", "/api/validXmlResponse").then((res)=>{
         const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
-        parseString(expectResponseXml, (parseErr, result)=>{
+        parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
           assert(parseErr === null);
           assert.deepEqual(res.body, result, "response didn't match");
           next();
@@ -217,7 +217,7 @@ describe("Client class", ()=>{
     it("shoud return valid text xml response as Object in promise", (next)=>{
       client.sendRequest("get", "/api/textXmlResponse").then((res)=>{
         const expectResponseXml = fs.readFileSync("./test/mock/validResponse.xml");
-        parseString(expectResponseXml, (parseErr, result)=>{
+        parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
           assert(parseErr === null);
           assert.deepEqual(res.body, result, "response didn't match");
           next();
@@ -288,9 +288,9 @@ describe("Client class", ()=>{
           assert.equal(err.name, "ApiError");
           assert.equal(err.statusCode, 400);
           const expectResponseXml = fs.readFileSync("./test/mock/errorResponse.xml");
-          parseString(expectResponseXml, (parseErr, result)=>{
-            assert.equal(err.errorCode, result.Response.Errors[0].Error[0].Code[0]);
-            assert.equal(err.message, result.Response.Errors[0].Error[0].Message[0]);
+          parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
+            assert.equal(err.errorCode, result.Response.Errors.Error.Code);
+            assert.equal(err.message, result.Response.Errors.Error.Message);
             next();
           });
         }
@@ -303,9 +303,9 @@ describe("Client class", ()=>{
         assert.equal(err.name, "ApiError");
         assert.equal(err.statusCode, 400);
         const expectResponseXml = fs.readFileSync("./test/mock/errorResponse.xml");
-        parseString(expectResponseXml, (parseErr, result)=>{
-          assert.equal(err.errorCode, result.Response.Errors[0].Error[0].Code[0]);
-          assert.equal(err.message, result.Response.Errors[0].Error[0].Message[0]);
+        parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
+          assert.equal(err.errorCode, result.Response.Errors.Error.Code);
+          assert.equal(err.message, result.Response.Errors.Error.Message);
           next();
         });
       });
@@ -316,8 +316,8 @@ describe("Client class", ()=>{
         assert.equal(err.name, "ApiError");
         assert.equal(err.statusCode, 403);
         const expectResponseXml = fs.readFileSync("./test/mock/errorResponseOfObjectStorage.xml");
-        parseString(expectResponseXml, (parseErr, result)=>{
-          assert.equal(err.errorCode, result.Error.Code[0]);
+        parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
+          assert.equal(err.errorCode, result.Error.Code);
           assert.equal(err.message, "Api returns error");
           next();
         });
@@ -329,9 +329,9 @@ describe("Client class", ()=>{
         assert.equal(err.name, "ApiError");
         assert.equal(err.statusCode, 403);
         const expectResponseXml = fs.readFileSync("./test/mock/errorResponseOfRDB.xml");
-        parseString(expectResponseXml, (parseErr, result)=>{
-          assert.equal(err.errorCode, result.ErrorResponse.Error[0].Code[0]);
-          assert.equal(err.message, result.ErrorResponse.Error[0].Message[0]);
+        parseString(expectResponseXml, {explicitArray:false}, (parseErr, result)=>{
+          assert.equal(err.errorCode, result.ErrorResponse.Error.Code);
+          assert.equal(err.message, result.ErrorResponse.Error.Message);
           next();
         });
       });
