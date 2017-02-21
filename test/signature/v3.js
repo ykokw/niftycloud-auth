@@ -127,13 +127,13 @@ describe("V3 class", ()=>{
         v3.sendRequestWithSignature("get", 111, {}).then().catch((err)=>{
           assert.ok(err instanceof v3.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        }); 
+        });
       });
       it("should return invalid parameters error if query is not object", (next)=>{
         v3.sendRequestWithSignature("get", "/", {query: 111}).then().catch((err)=>{
           assert.ok(err instanceof v3.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        }); 
+        });
       });
     });
   });
@@ -178,7 +178,7 @@ describe("V3 class", ()=>{
     describe("with query parameter in get method", ()=>{
       before(()=>{
         nock(endpoint).get(path)
-                      .query({key: "value"}) 
+                      .query({key: "value"})
                       .reply(200, expectResponse);
       });
       it("should send query parameter", (next)=>{

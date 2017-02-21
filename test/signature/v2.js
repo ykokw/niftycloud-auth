@@ -87,7 +87,7 @@ describe("V2 class", ()=>{
               next();
             });
           }
-        }); 
+        });
       });
       it("should return response in promise", (next)=>{
         v2.get(path, action, {query: query}).then((res)=>{
@@ -97,7 +97,7 @@ describe("V2 class", ()=>{
             assert.deepEqual(res.body, result);
             next();
           });
-        }).catch(next); 
+        }).catch(next);
       });
     });
     describe("with invalid parameters", ()=>{
@@ -106,19 +106,19 @@ describe("V2 class", ()=>{
         v2.get(path, null, {}).then().catch((err)=>{
           assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        }); 
+        });
       });
       it("should return invalid parameters error if action parameter is not string", (next)=>{
         v2.get(path, 111, {}).then().catch((err)=>{
           assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        }); 
+        });
       });
       it("should return invalid parameters error if query parameter is not object", (next)=>{
         v2.get(path, "DummyAction", {query: 111}).then().catch((err)=>{
           assert.ok(err instanceof v2.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        }); 
+        });
       });
     });
   });

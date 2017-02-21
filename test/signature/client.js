@@ -69,7 +69,7 @@ describe("Client class", ()=>{
           {
             "Content-Type": xmlType
           });
-      
+
       nock(endpoint, {
         reqheader: {
           'content-type': jsonType
@@ -125,7 +125,7 @@ describe("Client class", ()=>{
                       {
                         "Content-Type": xmlType
                       });
-      
+
       nock(endpoint, {
         reqheader: {
           'content-type': defaultType
@@ -172,14 +172,14 @@ describe("Client class", ()=>{
                       {
                         "Content-Type":xmlType
                       });
-      
+
       nock(endpoint).get("/api/errorXmlResponseOfObjectStorage")
                     .replyWithFile(403,
                       "./test/mock/errorResponseOfObjectStorage.xml",
                       {
                         "Content-Type":xmlType
                       });
-      
+
       nock(endpoint).get("/api/errorXmlResponseOfRDB")
                     .replyWithFile(403,
                       "./test/mock/errorResponseOfRDB.xml",

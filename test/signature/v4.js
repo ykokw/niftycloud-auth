@@ -30,7 +30,7 @@ describe("V4 class", ()=>{
       assert.equal(v4.endpoint, endpoint);
     });
   });
-  
+
   describe("create signature method", ()=>{
     const v4 = new NiftyCloud.V4(
       "12345678901234567890",
@@ -184,19 +184,19 @@ describe("V4 class", ()=>{
         v4.sendRequestWithSignature("get", 111, "east-1", "rdb", {}).then().catch((err)=>{
           assert.ok(err instanceof v4.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        }); 
+        });
       });
       it("should return invalid parameters error if region is not string", (next)=>{
         v4.sendRequestWithSignature("get", "/", 111, "rdb", {}).then().catch((err)=>{
           assert.ok(err instanceof v4.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        }); 
+        });
       });
       it("should return invalid parameters error if serviceId is not string", (next)=>{
         v4.sendRequestWithSignature("get", "/", "east-1", 111, {}).then().catch((err)=>{
           assert.ok(err instanceof v4.InvalidParametersError, `actual type: ${typeof err}`);
           next();
-        }); 
+        });
       });
     });
   });
@@ -243,7 +243,7 @@ describe("V4 class", ()=>{
     describe("with query parameter in get method", ()=>{
       before(()=>{
         nock(endpoint).get(path)
-                      .query({key: "value"}) 
+                      .query({key: "value"})
                       .reply(200, expectResponse);
       });
       it("should send query parameter", (next)=>{
