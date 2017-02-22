@@ -35,7 +35,8 @@
     "coveralls":"^2.11.16"
   },
   "scripts": {
-      "test": "istanbul cover _mocha --report lcovonly -R test/* && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+      "test": "istanbul cover _mocha --report lcovonly -R test/*",
+      "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "engines": {
       "node": ">=6.3.1"
