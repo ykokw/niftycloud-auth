@@ -1,6 +1,7 @@
 # niftycloud-auth
 
 [![Build Status](https://travis-ci.org/ykokw/niftycloud-auth.svg?branch=master)](https://travis-ci.org/ykokw/niftycloud-auth)
+[![Coverage Status](https://coveralls.io/repos/github/ykokw/niftycloud-auth/badge.svg?branch=feature%2Fcoverall)](https://coveralls.io/github/ykokw/niftycloud-auth?branch=feature%2Fcoverall)
 
 CAUTION: EXPERIMENTAL CODE
 
