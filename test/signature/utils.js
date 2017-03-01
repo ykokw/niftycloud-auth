@@ -3,7 +3,7 @@
 const assert      = require("chai").assert;
 const Utils = require("../../lib/signature/utils");
 
-describe.only("utils library", ()=>{
+describe("utils library", ()=>{
   describe("canonicalQueryString method", ()=>{
     it("should return empty query string with empty queries",()=>{
       assert.equal(Utils.canonicalQueryString({}), "");
