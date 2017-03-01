@@ -25,6 +25,12 @@ describe.only("utils library", ()=>{
     it("should return empty header string with null",()=>{
       assert.equal(Utils.canonicalHeaderString(null), "");
     });
+    it("should return valid header string", ()=>{
+      assert.equal(Utils.canonicalHeaderString({key: "value"}), "value");
+    });
+    it("should return valid header string that query object include boolean value", ()=>{
+      assert.equal(Utils.canonicalHeaderString({"boolean": true}), "true");
+    });
   });
   describe("fixedEncodeURIComponent method", ()=>{
     it("should return encoded string with url component charactors",()=>{
