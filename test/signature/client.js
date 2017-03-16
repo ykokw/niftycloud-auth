@@ -11,7 +11,7 @@ const Client = require("../../lib/signature/client");
 
 const endpoint = "https://east-1.cp.cloud.nifty.com";
 const exampleProxyEndpoint = "http://example.com";
-const exampleProvider = "aws";
+const exampleAuthType = "aws";
 const defaultType = 'application/x-www-form-urlencoded;charset=UTF-8';
 const jsonType = 'application/json;charset=utf-8';
 const xmlType = 'application/xml;charset=utf-8';
@@ -24,17 +24,17 @@ describe("Client class", ()=>{
       const cli = new Client();
       assert.equal(cli.endpoint , "");
       assert.equal(cli.proxy , "");
-      assert.equal(cli.provider , "nifty");
+      assert.equal(cli.authType , "nifty");
     });
     it("should set specified parameters", ()=>{
       const cli = new Client(
         endpoint,
         exampleProxyEndpoint,
-        exampleProvider
+        exampleAuthType
       );
       assert.equal(cli.endpoint , endpoint);
       assert.equal(cli.proxy , exampleProxyEndpoint);
-      assert.equal(cli.provider, exampleProvider);
+      assert.equal(cli.authType, exampleAuthType);
     });
   });
   describe("validateReqParameters method", ()=>{
