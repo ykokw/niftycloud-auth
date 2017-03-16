@@ -27,11 +27,10 @@ describe("Client class", ()=>{
       assert.equal(cli.authType , "nifty");
     });
     it("should set specified parameters", ()=>{
-      const cli = new Client(
-        endpoint,
-        exampleProxyEndpoint,
-        exampleAuthType
-      );
+      const cli = new Client(endpoint, {
+        proxy: exampleProxyEndpoint,
+        authType: exampleAuthType
+      });
       assert.equal(cli.endpoint , endpoint);
       assert.equal(cli.proxy , exampleProxyEndpoint);
       assert.equal(cli.authType, exampleAuthType);
