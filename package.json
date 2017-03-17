@@ -1,6 +1,6 @@
 {
   "name": "niftycloud-auth",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "This is the SDK for NIFTY Cloud API to make authentication parameters of API request.",
   "main": "lib/niftycloud.js",
   "repository": {
