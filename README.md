@@ -17,12 +17,12 @@ npm install niftycloud-auth
 
 There is classes that maekes signature parameters for signature version 2 / 3 / 4.
 
-First, you need to create instance of class of signature version that you want to request.   
+First, you need to create instance of class of signature version that you want to request.
 Then, you can request api with some parameters. Please visit [NIFTY Cloud API Reference page](http://cloud.nifty.com/api/rest/) to know about API endpoint, path and required parameters.
 
 All api request method is avaiable both callback `(err, res)=>{}` and promise chain.
 
-If content type of response is xml, `response.body` property includes result ofparsing xml by [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js).  
+If content type of response is xml, `response.body` property includes result ofparsing xml by [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js).
 Other response parameter is same as [Superagent](https://github.com/visionmedia/superagent)
 
 ```javascript
@@ -55,13 +55,16 @@ v2.get( "/api/", "DescribeInstances", {}).then((res)=>{
 ### Constructor
 
 - Required: Access key, Secret Access key, API Endpoint
-- Optional: Proxy endpoint (Please see `examples/v4_describeDBInstances.js` for example)
+- Optional: Proxy endpoint, authType(Only available in V4 class, value must be "nifty" or "aws")
 
 ```javascript
 const v2 = new NiftyCloud.V2(
   "YOUR_ACCESS_KEY",
   "YOUR_SECRET_ACCESS_KEY",
   "https://east-1.cp.cloud.nifty.com"
+  {
+    proxy: "http://example.com:8080"
+  }
 );
 ```
 
@@ -93,7 +96,7 @@ v2.get( "/api/", "DescribeInstances", {}).then((res)=>{
 
 ### Signature version 3
 
-(This class is available only for [Object storage](http://cloud.nifty.com/service/obj_storage.htm). 
+(This class is available only for [Object storage](http://cloud.nifty.com/service/obj_storage.htm).
 Because other products implementation of signature version 3 is different from object storage.)
 
 - PUT
@@ -154,7 +157,7 @@ v3.get("/first-bucket/niftycloud.png", {
     "Content-Type":"image/png"
   },
 }).then((res)=>{
-  //If the Content-Type is not "application/xml" in response headers, you can get buffer response from response.body property 
+  //If the Content-Type is not "application/xml" in response headers, you can get buffer response from response.body property
   const image = fs.writeFileSync("./niftycloud_get.png", res.body);
   console.log("res:" + res.status);
 }).catch((err)=>{
